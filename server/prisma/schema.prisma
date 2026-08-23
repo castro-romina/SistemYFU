@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Fundacion {
+  id          String   @id @default(cuid())
+  nombre      String
+  email       String   @unique
+  password    String
+  descripcion String?
+  createdAt   DateTime @default(now())
+
+  tareas      Tarea[]
+}
+
+model Voluntario {
+  id             String   @id @default(cuid())
+  nombre         String
+  email          String   @unique
+  password       String
+  intereses      String[]
+  disponibilidad String?
+  createdAt      DateTime @default(now())
+
+  postulaciones  Postulacion[]
+}
+
+model Tarea {
+  id          String    @id @default(cuid())
+  titulo      String
+  descripcion String
+  ubicacion   String?
+  fecha       DateTime?
+  activa      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+
+  fundacionId String
+  fundacion   Fundacion @relation(fields: [fundacionId], references: [id])
+
+  postulaciones Postulacion[]
+}
+
+model Postulacion {
+  id        String   @id @default(cuid())
+  estado    String   @default("pendiente") // pendiente | aceptada | rechazada
+  createdAt DateTime @default(now())
+
+  tareaId      String
+  tarea        Tarea      @relation(fields: [tareaId], references: [id])
+
+  voluntarioId String
+  voluntario   Voluntario @relation(fields: [voluntarioId], references: [id])
+
+  @@unique([tareaId, voluntarioId])
+} 
