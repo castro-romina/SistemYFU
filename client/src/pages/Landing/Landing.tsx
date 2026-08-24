@@ -55,9 +55,7 @@ export default function Landing() {
       {/* Navbar */}
       <header className="max-w-7xl mx-auto flex items-center justify-between px-6 py-5">
         <div className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-lg bg-purple-600 flex items-center justify-center">
-            <CheckSquare className="w-5 h-5 text-white" />
-          </div>
+          <img src="/public/matchVol.jpeg" alt="MatchVol" width="40" height="40" className="rounded-lg" />
           <span className="font-display font-bold text-xl">MatchVol</span>
         </div>
 
