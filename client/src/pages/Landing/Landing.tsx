@@ -1,9 +1,6 @@
 import { Link } from "react-router-dom";
 import {
   CheckSquare,
-  Settings,
-  Share2,
-  Heart,
   Building2,
   UserRound,
   Clock,
@@ -51,12 +48,15 @@ const stats = [
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-[var(--color-page-bg)] text-[var(--color-text)]">
+    <div className="min-h-screen bg-[#fcfaff] text-[var(--color-text)]">
       {/* Navbar */}
       <header className="max-w-7xl mx-auto flex items-center justify-between px-6 py-5">
         <div className="flex items-center gap-2">
-          <img src="/public/matchVol.jpeg" alt="MatchVol" width="40" height="40" className="rounded-lg" />
-          <span className="font-display font-bold text-xl">MatchVol</span>
+          <img src="/logofinal.png" alt="MatchVol" width="40" height="40" className="rounded" />
+          <span className="font-display font-bold text-xl">
+            <span className="text-purple-600">Match</span>
+            <span className="text-pink-500">Vol</span>
+          </span>
         </div>
 
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-[#4B4560]">
@@ -69,13 +69,13 @@ export default function Landing() {
         <div className="flex items-center gap-3">
           <Link
             to="/login"
-            className="hidden sm:inline-block px-5 py-2 rounded-full border border-purple-300 text-purple-700 text-sm font-semibold hover:bg-purple-50 transition"
+            className="hidden sm:inline-block px-5 py-2 rounded-lg border border-purple-300 text-purple-700 text-sm font-semibold hover:bg-purple-50 transition"
           >
             Log In
           </Link>
           <Link
             to="/register"
-            className="px-5 py-2 rounded-full bg-pink-500 text-white text-sm font-semibold hover:bg-pink-600 transition"
+            className="px-5 py-2 rounded-lg bg-pink-500 text-white text-sm font-semibold hover:bg-pink-600 transition"
           >
             Sign Up
           </Link>
@@ -83,7 +83,7 @@ export default function Landing() {
       </header>
 
       {/* Hero */}
-      <section id="home" className="max-w-7xl mx-auto px-6 pt-10 pb-16 grid md:grid-cols-2 gap-12 items-center">
+      <section id="home" className="max-w-7xl mx-auto px-6 pt-10 pb-16 grid md:grid-cols-2 gap-5 items-center">
         <div>
           <h1 className="font-display text-4xl sm:text-5xl font-extrabold leading-tight">
             The perfect match between{" "}
@@ -94,83 +94,91 @@ export default function Landing() {
             MatchVol connects organizations with volunteers based on their
             skills, interests, and availability — to create real impact.
           </p>
-          <div className="mt-8 flex flex-wrap gap-4">
+          <div className="mt-8 flex flex-wrap gap-4 mb-8">
             <Link
               to="/register"
-              className="px-6 py-3 rounded-full bg-pink-500 text-white font-semibold hover:bg-pink-600 transition"
+              className="px-6 py-3 rounded-lg bg-pink-500 text-white font-semibold hover:bg-pink-600 transition"
             >
               Get Started
             </Link>
             <a
               href="#how-it-works"
-              className="px-6 py-3 rounded-full border border-purple-300 text-purple-700 font-semibold hover:bg-purple-50 transition"
+              className="px-6 py-3 rounded-lg border border-purple-300 text-purple-700 font-semibold hover:bg-purple-50 transition"
             >
               See how it works
             </a>
           </div>
         </div>
 
-        {/* Decorative circle graphic (no stock photo, built with icons) */}
-        <div className="relative w-full aspect-square max-w-md mx-auto">
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-200 via-purple-100 to-pink-100" />
-          <div className="absolute inset-6 rounded-full border-2 border-dashed border-purple-300" />
-          {[0, 60, 120, 180, 240, 300].map((angle, i) => {
-            const rad = (angle * Math.PI) / 180;
-            const radius = 42; // percent
-            const top = 50 - radius * Math.cos(rad);
-            const left = 50 + radius * Math.sin(rad);
-            const colors = [
-              "bg-purple-600",
-              "bg-pink-500",
-              "bg-purple-400",
-              "bg-pink-400",
-              "bg-purple-500",
-              "bg-pink-300",
-            ];
-            return (
-              <div
-                key={i}
-                className={`hero-orbit-avatar ${colors[i]}`}
-                style={{ top: `${top}%`, left: `${left}%`, transform: "translate(-50%, -50%)" }}
-              >
-                <Users className="w-5 h-5 text-white" />
-              </div>
-            );
-          })}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="hero-badge">
-              <CheckSquare className="w-10 h-10 text-purple-600" />
-            </div>
-          </div>
+        {/* Hero image on the right */}
+        <div className="relative w-full max-w-md mx-auto">
+          <img src="/img_landing/principal.png" alt="Volunteers" className="w-full rounded-2xl" />
         </div>
       </section>
 
       {/* Feature strip */}
-      <section className="max-w-6xl mx-auto px-6">
-        <div className="bg-purple-50 rounded-3xl px-8 py-8 grid sm:grid-cols-3 gap-8 sm:divide-x divide-purple-200">
-          <div className="flex gap-4">
-            <Settings className="w-9 h-9 text-purple-600 shrink-0" />
+      <section className="max-w-6xl mx-auto px-6 py-6">
+        <div className="bg-purple-50 rounded-3xl px-8 py-8 flex flex-col sm:flex-row items-center sm:divide-x divide-gray-300">
+          <div className="flex gap-6 flex-1 pb-8 sm:pb-0 sm:pr-8">
+            <svg width="70" height="70" viewBox="0 0 70 70" className="shrink-0">
+              <circle cx="35" cy="35" r="32" fill="none" stroke="#7C3AED" strokeWidth="3"/>
+              <circle cx="35" cy="12" r="6" fill="#7C3AED"/>
+              <circle cx="58" cy="22" r="6" fill="#7C3AED"/>
+              <circle cx="58" cy="48" r="6" fill="#7C3AED"/>
+              <circle cx="35" cy="58" r="6" fill="#7C3AED"/>
+              <circle cx="12" cy="48" r="6" fill="#7C3AED"/>
+              <circle cx="12" cy="22" r="6" fill="#7C3AED"/>
+              <line x1="35" y1="35" x2="35" y2="12" stroke="#7C3AED" strokeWidth="2"/>
+              <line x1="35" y1="35" x2="58" y2="22" stroke="#7C3AED" strokeWidth="2"/>
+              <line x1="35" y1="35" x2="58" y2="48" stroke="#7C3AED" strokeWidth="2"/>
+              <line x1="35" y1="35" x2="35" y2="58" stroke="#7C3AED" strokeWidth="2"/>
+              <line x1="35" y1="35" x2="12" y2="48" stroke="#7C3AED" strokeWidth="2"/>
+              <line x1="35" y1="35" x2="12" y2="22" stroke="#7C3AED" strokeWidth="2"/>
+              <circle cx="35" cy="35" r="5" fill="#7C3AED"/>
+            </svg>
             <div>
-              <h3 className="font-display font-bold">Automation</h3>
-              <p className="text-sm text-[#4B4560] mt-1">
+              <h3 className="font-display font-bold text-black">Automation</h3>
+              <p className="text-sm text-black mt-1">
                 Automatically find the ideal volunteers for every task.
               </p>
             </div>
           </div>
-          <div className="flex gap-4 sm:pl-8">
-            <Share2 className="w-9 h-9 text-purple-600 shrink-0" />
+          
+          <div className="flex gap-6 flex-1 pb-8 sm:pb-0 sm:px-8">
+            <svg width="70" height="70" viewBox="0 0 70 70" className="shrink-0">
+              <circle cx="35" cy="35" r="28" fill="#7C3AED" opacity="0.2"/>
+              <g fill="none" stroke="#7C3AED" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="35" cy="35" r="22"/>
+                <path d="M 35 25 L 35 35 L 44 44"/>
+              </g>
+              <g fill="#EC4899">
+                <path d="M 48 20 L 52 16 L 56 20 L 52 24 Z"/>
+              </g>
+            </svg>
             <div>
-              <h3 className="font-display font-bold">Efficient Matching</h3>
-              <p className="text-sm text-[#4B4560] mt-1">
+              <h3 className="font-display font-bold text-black">Efficient Matching</h3>
+              <p className="text-sm text-black mt-1">
                 Save time and organize your team intelligently.
               </p>
             </div>
           </div>
-          <div className="flex gap-4 sm:pl-8">
-            <Heart className="w-9 h-9 text-pink-500 shrink-0" />
+          
+          <div className="flex gap-6 flex-1 sm:pl-8">
+            <svg width="70" height="70" viewBox="0 0 70 70" className="shrink-0">
+              <defs>
+                <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#7C3AED"/>
+                  <stop offset="100%" stopColor="#EC4899"/>
+                </linearGradient>
+              </defs>
+              <path d="M 35 58 C 35 58 15 42 15 30 C 15 22 20 16 25 16 C 28 16 31 18 35 21 C 39 18 42 16 45 16 C 50 16 55 22 55 30 C 55 42 35 58 35 58 Z" 
+                    fill="url(#heartGradient)" 
+                    stroke="#7C3AED" 
+                    strokeWidth="1.5"/>
+            </svg>
             <div>
-              <h3 className="font-display font-bold">Greater Social Impact</h3>
-              <p className="text-sm text-[#4B4560] mt-1">
+              <h3 className="font-display font-bold text-black">Greater Social Impact</h3>
+              <p className="text-sm text-black mt-1">
                 Our purpose is to help you make the biggest difference possible.
               </p>
             </div>
@@ -179,66 +187,66 @@ export default function Landing() {
       </section>
 
       {/* Audience cards */}
-      <section className="max-w-6xl mx-auto px-6 py-14 grid md:grid-cols-2 gap-6">
-        <div id="ngos" className="bg-purple-100 rounded-3xl p-8">
-          <div className="w-14 h-14 rounded-full bg-purple-600 flex items-center justify-center mb-4">
-            <Building2 className="w-7 h-7 text-white" />
+      <section className="max-w-6xl mx-auto px-6 py-16 grid md:grid-cols-2 gap-8">
+        <div id="ngos" className="rounded-3xl p-12" style={{ backgroundColor: "#f4f2f7" }}>
+          <div className="w-16 h-16 rounded-full bg-purple-600 flex items-center justify-center mb-6">
+            <Building2 className="w-8 h-8 text-white" />
           </div>
-          <h3 className="font-display text-xl font-bold text-purple-800">
+          <h3 className="font-display text-2xl font-bold text-purple-700 mb-3">
             For Organizations
           </h3>
-          <p className="text-[#4B4560] mt-2">
+          <p className="text-gray-700 mb-6">
             Manage your volunteers and tasks simply and effectively.
           </p>
-          <ul className="mt-5 space-y-3">
-            <li className="flex items-center gap-3 text-sm">
+          <ul className="space-y-4 mb-8">
+            <li className="flex items-center gap-3 text-gray-700">
               <Clock className="w-5 h-5 text-purple-600" />
               Improve volunteer management
             </li>
-            <li className="flex items-center gap-3 text-sm">
+            <li className="flex items-center gap-3 text-gray-700">
               <Users className="w-5 h-5 text-purple-600" />
               Find qualified profiles
             </li>
-            <li className="flex items-center gap-3 text-sm">
+            <li className="flex items-center gap-3 text-gray-700">
               <BarChart3 className="w-5 h-5 text-purple-600" />
               Track and measure results
             </li>
           </ul>
           <Link
             to="/register?role=ngo"
-            className="inline-block mt-6 px-6 py-3 rounded-full bg-purple-700 text-white font-semibold hover:bg-purple-800 transition"
+            className="inline-block px-8 py-3 rounded-lg bg-purple-600 text-white font-semibold hover:bg-purple-700 transition"
           >
             I'm an NGO
           </Link>
         </div>
 
-        <div id="volunteers" className="bg-pink-50 rounded-3xl p-8">
-          <div className="w-14 h-14 rounded-full bg-pink-500 flex items-center justify-center mb-4">
-            <UserRound className="w-7 h-7 text-white" />
+        <div id="volunteers" className="rounded-3xl p-12" style={{ backgroundColor: "#fae5f3" }}>
+          <div className="w-16 h-16 rounded-full bg-pink-500 flex items-center justify-center mb-6">
+            <UserRound className="w-8 h-8 text-white" />
           </div>
-          <h3 className="font-display text-xl font-bold text-pink-600">
+          <h3 className="font-display text-2xl font-bold text-pink-600 mb-3">
             For Volunteers
           </h3>
-          <p className="text-[var(--color-text-muted)]mt-2">
+          <p className="text-gray-700 mb-6">
             Find opportunities that fit your interests and availability.
           </p>
-          <ul className="mt-5 space-y-3">
-            <li className="flex items-center gap-3 text-sm">
+          <ul className="space-y-4 mb-8">
+            <li className="flex items-center gap-3 text-gray-700">
               <Calendar className="w-5 h-5 text-pink-500" />
               Flexible scheduling
             </li>
-            <li className="flex items-center gap-3 text-sm">
+            <li className="flex items-center gap-3 text-gray-700">
               <ListChecks className="w-5 h-5 text-pink-500" />
               Projects matched to your profile
             </li>
-            <li className="flex items-center gap-3 text-sm">
+            <li className="flex items-center gap-3 text-gray-700">
               <Smartphone className="w-5 h-5 text-pink-500" />
               Grow personally and professionally
             </li>
           </ul>
           <Link
             to="/register?role=volunteer"
-            className="inline-block mt-6 px-6 py-3 rounded-full bg-pink-500 text-white font-semibold hover:bg-pink-600 transition"
+            className="inline-block px-8 py-3 rounded-lg bg-pink-500 text-white font-semibold hover:bg-pink-600 transition"
           >
             I Want to Volunteer
           </Link>
@@ -294,24 +302,63 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Footer CTA */}
-      <section className="max-w-6xl mx-auto px-6 py-16 text-center">
-        <h2 className="font-display text-3xl sm:text-4xl font-extrabold">
-          Join the community that{" "}
-          <span className="text-pink-500">transforms</span>
-        </h2>
-        <p className="text-[var(--color-text-muted)] mt-3 max-w-lg mx-auto">
-          Whether you're an organization or a volunteer, your next match can
-          make a difference.
-        </p>
-        <div className="flex items-center justify-center gap-2 mt-8">
-          <CheckSquare className="w-6 h-6 text-purple-600" />
-          <span className="font-display font-bold text-lg">MatchVol</span>
+      {/* Footer*/}
+      <div style={{ backgroundColor: "#ebd7f7" }} className="w-full py-10 px-6 md:px-12 relative overflow-hidden">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-[1.1fr_1.1fr_0.8fr] gap-8 items-center min-h-[160px]">
+
+          <div className="text-left z-10">
+            <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-purple-950 leading-tight">
+              Join the community <br />
+              that <span className="text-pink-500">transforms</span>
+            </h2>
+            <p className="text-purple-900 mt-2 text-sm max-w-sm">
+              Whether you're an organization or a volunteer, your next match can make a difference.
+            </p>
+          </div>
+
+          <div className="flex flex-col items-center justify-center text-center z-10">
+            <div className="flex items-center gap-3">
+              <img 
+                src="/logofinal.png" 
+                alt="MatchVol Icon" 
+                width="50" 
+                height="50" 
+                className="w-15 h-15 object-contain" 
+              />
+              
+              <span className="font-display font-bold text-3xl ">
+                <span className="text-purple-600">Match</span>
+                <span className="text-pink-500">Vol</span>
+              </span>
+            </div>
+            
+            {/* Subtexto del logo */}
+            <p className="text-[10px] font-bold tracking-widest text-purple-800 mt-2 uppercase">
+              CONNECT &bull; CONTRIBUTE &bull; TRANSFORM
+            </p>
+            
+            {/* Líneas de colores decorativas inferiores */}
+            <div className="flex gap-1 w-36 h-2 mt-3">
+              <div className="flex-1 bg-purple-700"></div>
+              <div className="flex-1 bg-pink-500"></div>
+              <div className="flex-1 bg-white border border-purple-300"></div>
+              <div className="flex-1 bg-gray-900"></div>
+            </div>
+          </div>
+
+          <div className="absolute right-0 bottom-0 top-0 w-1/3 pointer-events-none hidden md:block">
+            
+            {/* Círculo/Ovalo punteado de fondo */}
+            <div className="absolute right-24 bottom-6 w-24 h-24 border-2 border-dashed border-gray-900 rounded-full opacity-40"></div>
+            
+            {/* Óvalo / Forma Rosa (Base inferior) */}
+            <div className="absolute -right-8 -bottom-10 w-44 h-28 bg-pink-500 rounded-full rotate-[12deg]"></div>
+            
+            {/* Óvalo / Forma Morada (Encima de la rosa, cortando la esquina) */}
+            <div className="absolute -right-6 -top-6 w-36 h-48 bg-purple-700 rounded-full -rotate-[25deg]"></div>
+          </div>
         </div>
-        <p className="text-xs tracking-widest text-[var(--color-text-faint)] mt-1">
-          CONNECT &bull; CONTRIBUTE &bull; TRANSFORM
-        </p>
-      </section>
+      </div>
     </div>
   );
 }
