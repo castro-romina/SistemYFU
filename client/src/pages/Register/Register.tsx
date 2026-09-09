@@ -24,17 +24,17 @@ export default function Register() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
-    if (email.trim().toLowerCase() !== confirmEmail.trim().toLowerCase()) return setError("Los correos electronicos no coinciden.");
-    if (password !== confirmPassword) return setError("Las contrasenas no coinciden.");
-    if (!acceptedTerms) return setError("Debes aceptar los terminos y las politicas de privacidad.");
+    if (email.trim().toLowerCase() !== confirmEmail.trim().toLowerCase()) return setError("Email addresses do not match.");
+    if (password !== confirmPassword) return setError("Passwords do not match.");
+    if (!acceptedTerms) return setError("You must accept the terms and privacy policy.");
 
     setIsSubmitting(true);
     try {
       const user = await register({ name, email, password, role });
       localStorage.setItem("matchvol-user", JSON.stringify(user));
-      navigate("/", { state: { notice: "Tu cuenta fue creada correctamente." } });
+      navigate("/", { state: { notice: "Your account was successfully created." } });
     } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "No pudimos crear la cuenta.");
+      setError(requestError instanceof Error ? requestError.message : "We couldn't create your account.");
     } finally {
       setIsSubmitting(false);
     }
@@ -43,25 +43,30 @@ export default function Register() {
   return <div className="auth-shell">
     <main className="auth-card auth-card--register" aria-labelledby="register-title">
       <header className="auth-heading">
-        <Link className="auth-brand" to="/" aria-label="MatchVol, inicio">Match<span>Vol</span></Link>
-        <h1 id="register-title">Crea tu cuenta</h1>
-        <p>Es rapido, facil y gratis</p>
+        <Link className="auth-brand" to="/" aria-label="MatchVol, home">Match<span>Vol</span></Link>
+        <h1 id="register-title">Create your account</h1>
+        <p>It's fast, easy, and free</p>
       </header>
       <form onSubmit={handleSubmit} className="auth-form">
         <RoleSelector value={role} onChange={setRole} />
-        <TextField id="register-name" label={role === "organization" ? "Nombre de la organizacion" : "Usuario"} type="text" placeholder={role === "organization" ? "Nombre de tu organizacion" : "Tu nombre"} value={name} onChange={(event) => setName(event.target.value)} autoComplete="name" required />
+        <TextField id="register-name" label={role === "organization" ? "Organization name" : "Username"} type="text" placeholder={role === "organization" ? "Your organization name" : "Your name"} value={name} onChange={(event) => setName(event.target.value)} autoComplete="name" required />
         <div className="auth-fields-row">
-          <TextField id="register-email" label="Correo electronico" type="email" placeholder="ejemplo@correo.com" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" required />
-          <TextField id="register-email-confirm" label="Confirmar correo" type="email" placeholder="ejemplo@correo.com" value={confirmEmail} onChange={(event) => setConfirmEmail(event.target.value)} autoComplete="email" required />
+          <TextField id="register-email" label="Email address" type="email" placeholder="example@email.com" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" required />
+          <TextField id="register-email-confirm" label="Confirm email" type="email" placeholder="example@email.com" value={confirmEmail} onChange={(event) => setConfirmEmail(event.target.value)} autoComplete="email" required />
         </div>
-        <TextField id="register-password" label="Contrasena" type="password" placeholder="Minimo 8 caracteres" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="new-password" minLength={8} required />
-        <TextField id="register-password-confirm" label="Confirmar contrasena" type="password" placeholder="Repite tu contrasena" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} autoComplete="new-password" minLength={8} required />
-        <label className="auth-terms"><input type="checkbox" checked={acceptedTerms} onChange={(event) => setAcceptedTerms(event.target.checked)} />Acepto los <a href="#terminos">Terminos y condiciones</a> y la <a href="#privacidad">Politica de privacidad</a></label>
+        <TextField id="register-password" label="Password" type="password" placeholder="Minimum 8 characters" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="new-password" minLength={8} required />
+        <TextField id="register-password-confirm" label="Confirm password" type="password" placeholder="Repeat your password" value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} autoComplete="new-password" minLength={8} required />
+        
+        <label className="auth-terms">
+          <input type="checkbox" checked={acceptedTerms} onChange={(event) => setAcceptedTerms(event.target.checked)} />
+          I accept the <Link to="/terms" className="hover:underline text-purple-600">Terms and conditions</Link> and the <Link to="/privacy" className="hover:underline text-purple-600">Privacy policy</Link>
+        </label>
+        
         {error && <p className="auth-message auth-message--error" role="alert">{error}</p>}
-        <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Creando cuenta..." : "Crear tu cuenta"}</Button>
+        <Button type="submit" disabled={isSubmitting}>{isSubmitting ? "Creating account..." : "Create your account"}</Button>
       </form>
       <SocialAuth />
-      <p className="auth-switch">Ya tienes cuenta? <Link to="/login">Inicia sesion</Link></p>
+      <p className="auth-switch">Already have an account? <Link to="/login">Sign in</Link></p>
     </main>
   </div>;
 }

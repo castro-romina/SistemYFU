@@ -4,6 +4,8 @@ import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
 import SocialAuth from "./components/auth/SocialAuth";
 import AuthToggle from "./components/AuthToggle";
+import Terms from "./pages/Terms/Terms";
+import Privacy from "./pages/Privacy/Privacy";
 
 
 export default function App() {
@@ -14,6 +16,8 @@ export default function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/auth" element={<SocialAuth />} />
       <Route path="/toggle" element={<AuthToggle value="volunteer" onChange={() => {}} />} />
+      <Route path="/terms" element={<Terms />} />
+      <Route path="/privacy" element={<Privacy />} />
     </Routes>
   );
 }
