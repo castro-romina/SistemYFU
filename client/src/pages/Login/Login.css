@@ -1,1 +1,38 @@
-/* Estilos propios de la página Login */
+.auth-shell { min-height: 100vh; padding: 40px 20px; display: grid; place-items: center; background: linear-gradient(145deg, #fbf8ff 0%, #f1e7fb 100%); }
+.auth-card { width: min(100%, 520px); padding: 34px 38px 28px; border-radius: 26px; background: #fff; box-shadow: 8px 12px 24px rgba(42, 29, 63, 0.25); }
+.auth-card--register { width: min(100%, 660px); }
+.auth-heading { margin-bottom: 24px; }
+.auth-brand { display: inline-block; margin-bottom: 16px; color: #7d2dd0; font-size: 17px; font-weight: 800; text-decoration: none; }
+.auth-brand span, .auth-heading strong { color: #ed008c; }
+.auth-heading h1 { margin: 0; color: #25213a; font-size: 28px; line-height: 1.15; letter-spacing: 0; }
+.auth-heading p { margin: 4px 0 0; color: #4e485c; font-size: 15px; }
+.auth-form { display: grid; gap: 15px; }
+.auth-field { display: grid; gap: 6px; color: #16131d; font-size: 14px; font-weight: 700; }
+.auth-input-wrap { position: relative; display: flex; align-items: center; color: #77727e; }
+.auth-input-wrap > svg { position: absolute; left: 12px; pointer-events: none; }
+.auth-input-wrap input { width: 100%; height: 42px; padding: 0 44px; border: 1px solid #3e3846; border-radius: 7px; outline: none; background: #fbfaff; color: #25213a; box-shadow: 0 3px 8px rgba(22, 18, 29, 0.16) inset; }
+.auth-input-wrap input::placeholder { color: #99949e; }
+.auth-input-wrap input:focus { border-color: #822dd3; box-shadow: 0 0 0 3px rgba(130, 45, 211, 0.15); }
+.auth-password-toggle { position: absolute; right: 9px; display: grid; border: 0; background: transparent; color: #292531; cursor: pointer; }
+.auth-field-error, .auth-message { margin: 0; color: #c91958; font-size: 13px; }
+.role-selector { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.role-selector button, .auth-button { min-height: 39px; border-radius: 7px; font-weight: 700; cursor: pointer; transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease; }
+.role-selector button { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px; border: 1px solid #332d3a; background: #fff; color: #2c2733; font-size: 12px; }
+.role-selector button.is-selected { border-color: #822dd3; background: #822dd3; color: #fff; box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.12); }
+.auth-button { width: 100%; border: 1px solid transparent; padding: 9px 16px; font-size: 14px; }
+.auth-button--primary { background: #ed008c; color: #fff; box-shadow: inset 0 -2px 0 rgba(105, 0, 62, 0.2); }
+.auth-button--primary:hover:not(:disabled) { background: #ce0078; transform: translateY(-1px); }
+.auth-button:disabled, .social-auth button:disabled { cursor: not-allowed; opacity: 0.6; }
+.auth-fields-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.auth-terms { display: flex; align-items: flex-start; gap: 7px; color: #514a5b; font-size: 12px; line-height: 1.4; }
+.auth-terms input { margin: 2px 0 0; accent-color: #822dd3; }
+.auth-terms a, .auth-switch a, .auth-forgot { color: #7827c5; font-weight: 700; text-decoration: none; }
+.auth-forgot { display: block; margin: 12px 0 16px; text-align: center; font-size: 13px; }
+.social-auth { margin-top: 17px; }
+.social-auth__divider { display: flex; align-items: center; gap: 9px; color: #4c4654; font-size: 13px; }
+.social-auth__divider::before, .social-auth__divider::after { content: ""; flex: 1; border-top: 1px solid #b9b3bc; }
+.social-auth__buttons { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 13px; }
+.social-auth__buttons button { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 37px; border: 1px solid #3e3846; border-radius: 7px; background: #fff; color: #302a36; font-size: 12px; }
+.facebook-icon { display: grid; width: 19px; height: 19px; place-items: center; border-radius: 50%; background: #1877f2; color: #fff; font: 700 17px/1 Arial, sans-serif; }
+.auth-switch { margin: 17px 0 0; text-align: center; color: #39333e; font-size: 12px; }
+@media (max-width: 560px) { .auth-shell { padding: 22px 14px; } .auth-card { padding: 27px 21px 24px; border-radius: 20px; } .auth-heading h1 { font-size: 24px; } .auth-fields-row { grid-template-columns: 1fr; } .role-selector button { font-size: 11px; } .social-auth__buttons button { font-size: 0; } .social-auth__buttons button svg, .social-auth__buttons button span { font-size: initial; } }
