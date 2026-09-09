@@ -3,7 +3,7 @@ import Landing from "./pages/Landing/Landing";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
 import SocialAuth from "./components/auth/SocialAuth";
-import AuthToggle from "./components/AuthToggle";
+import AuthToggle from "./components/auth/AuthToggle";
 import Terms from "./pages/Terms/Terms";
 import Privacy from "./pages/Privacy/Privacy";
 
