@@ -21,3 +21,8 @@ dist/
 
 # Lock files
 skills-lock.json
+
+.env
+server/.env
+node_modules/
+dist/
