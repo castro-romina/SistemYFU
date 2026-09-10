@@ -24,7 +24,7 @@ export default function Login() {
     try {
       const user = await login({ email, password, role });
       localStorage.setItem("matchvol-user", JSON.stringify(user));
-      navigate("/InProgress", { state: { notice: `Welcome back, ${user.name}` } });
+      navigate("/InProgress", { state: { notice: `Welcome back, ${user.name}` } });""
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "We couldn't sign you in.");
     } finally {
@@ -62,7 +62,9 @@ export default function Login() {
             </Button>
         </form>
         
-        <a className="auth-forgot text-pink-500 hover:text-pink-600 font-medium" href="mailto:support@matchvol.com">Forgot your password?</a>
+        <Link to="/forgot-password" className="auth-forgot text-pink-500 hover:text-pink-600 font-medium block text-center mt-4">
+          Forgot your password?
+        </Link>
         
         <div className="auth-divider">
           <span>or continue with</span>

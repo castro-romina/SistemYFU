@@ -46,7 +46,7 @@ model Tarea {
 
 model Postulacion {
   id        String   @id @default(cuid())
-  estado    String   @default("pendiente") // pendiente | aceptada | rechazada
+  estado    String   @default("pendiente")
   createdAt DateTime @default(now())
 
   tareaId      String
@@ -56,4 +56,13 @@ model Postulacion {
   voluntario   Voluntario @relation(fields: [voluntarioId], references: [id])
 
   @@unique([tareaId, voluntarioId])
-} 
+}
+
+model PasswordReset {
+  id        String   @id @default(cuid())
+  email     String
+  token     String   @unique
+  usado     Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
