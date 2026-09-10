@@ -24,7 +24,7 @@ export default function Login() {
     try {
       const user = await login({ email, password, role });
       localStorage.setItem("matchvol-user", JSON.stringify(user));
-      navigate("/", { state: { notice: `Welcome back, ${user.name}` } });
+      navigate("/InProgress", { state: { notice: `Welcome back, ${user.name}` } });
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "We couldn't sign you in.");
     } finally {
@@ -36,7 +36,6 @@ export default function Login() {
     <div className="auth-shell">
       <main className="auth-card" aria-labelledby="login-title">
         <header className="auth-heading flex flex-col items-center mb-6">
-          {/* Logo y marca más grandes con text-3xl y un logo de width 48 */}
           <div className="flex items-center gap-2 mb-3 justify-center">
             <img src="/logofinal.png" alt="MatchVol" width="48" height="48" className="rounded-lg" />
             <span className="font-display font-bold text-3xl tracking-tight">

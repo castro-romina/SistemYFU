@@ -4,7 +4,7 @@ import RoleSelector from "../../components/auth/RoleSelector";
 import SocialAuth from "../../components/auth/SocialAuth";
 import Button from "../../components/common/Button"; 
 import TextField from "../../components/common/TextField";
-import { register, type AccountRole } from "../../lib/api";
+import { register as executeRegister, type AccountRole } from "../../lib/api"
 import "./Register.css";
 
 export default function Register() {
@@ -30,9 +30,9 @@ export default function Register() {
 
     setIsSubmitting(true);
     try {
-      const user = await register({ name, email, password, role });
+      const user = await executeRegister({ name, email, password, role });
       localStorage.setItem("matchvol-user", JSON.stringify(user));
-      navigate("/", { state: { notice: "Your account was successfully created." } });
+      navigate("/InProgress");
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "We couldn't create your account.");
     } finally {
@@ -44,7 +44,6 @@ export default function Register() {
     <div className="auth-shell">
       <main className="auth-card auth-card--register" aria-labelledby="register-title">
         <header className="auth-heading flex flex-col items-center mb-6">
-          {/* Logo oficial y marca unificada con el Login */}
           <div className="flex items-center gap-2 mb-3 justify-center">
             <img src="/logofinal.png" alt="MatchVol" width="48" height="48" className="rounded-lg" />
             <span className="font-display font-bold text-3xl tracking-tight">
@@ -87,7 +86,6 @@ export default function Register() {
           
           {error && <p className="auth-message auth-message--error" role="alert">{error}</p>}
           
-          {/* Botón Rosa Corporativo Forzado para evitar bloqueos del CSS viejo */}
           <Button 
             type="submit" 
             disabled={isSubmitting} 

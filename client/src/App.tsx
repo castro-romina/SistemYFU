@@ -6,6 +6,7 @@ import SocialAuth from "./components/auth/SocialAuth";
 import AuthToggle from "./components/auth/AuthToggle";
 import Terms from "./pages/Terms/Terms";
 import Privacy from "./pages/Privacy/Privacy";
+import InProcess from "./pages/InProgress/InProgress";
 
 
 export default function App() {
@@ -18,6 +19,7 @@ export default function App() {
       <Route path="/toggle" element={<AuthToggle value="volunteer" onChange={() => {}} />} />
       <Route path="/terms" element={<Terms />} />
       <Route path="/privacy" element={<Privacy />} />
+      <Route path="/InProgress" element={<InProcess />} />
     </Routes>
   );
 }
