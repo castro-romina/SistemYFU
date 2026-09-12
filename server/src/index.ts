@@ -15,6 +15,7 @@ app.get("/api/health", (_req, res) => {
   res.json({ status: "ok" });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server corriendo en puerto ${PORT}`);
-});
+app.use(cors({
+  origin: ["https://sistem-yfu-xkb4.vercel.app", "http://localhost:3000"],
+  credentials: true
+}));
