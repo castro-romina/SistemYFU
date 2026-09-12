@@ -7,7 +7,7 @@ interface AuthResponse {
   token: string;
 }
 
-const API_URL = "http://localhost:4000/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
 export async function login(data: any): Promise<AuthResponse> {
   const response = await fetch(`${API_URL}/auth/login`, {
@@ -23,12 +23,12 @@ export async function login(data: any): Promise<AuthResponse> {
 }
 
 export async function register(data: any): Promise<any> {
-  const response = await fetch("http://localhost:4000/api/auth/register", {
+  const response = await fetch(`${API_URL}/auth/register`, {
     method: "POST",
     headers: { 
-      "Content-Type": "application/json" // 👈 Clave para que express.json() funcione
+      "Content-Type": "application/json"
     },
-    body: JSON.stringify(data), // 👈 Envía { name, email, password, role }
+    body: JSON.stringify(data),
   });
 
   if (!response.ok) {
