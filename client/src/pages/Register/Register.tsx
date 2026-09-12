@@ -4,7 +4,7 @@ import RoleSelector from "../../components/auth/RoleSelector";
 import SocialAuth from "../../components/auth/SocialAuth";
 import Button from "../../components/common/Button"; 
 import TextField from "../../components/common/TextField";
-import { register as executeRegister, type AccountRole } from "../../lib/api"
+import { register as executeRegister, register, type AccountRole } from "../../lib/api"
 import "./Register.css";
 
 export default function Register() {
@@ -28,16 +28,14 @@ export default function Register() {
     if (password !== confirmPassword) return setError("Passwords do not match.");
     if (!acceptedTerms) return setError("You must accept the terms and privacy policy.");
 
-    setIsSubmitting(true);
-    try {
-      const user = await executeRegister({ name, email, password, role });
-      localStorage.setItem("matchvol-user", JSON.stringify(user));
-      navigate("/InProgress");
-    } catch (requestError) {
-      setError(requestError instanceof Error ? requestError.message : "We couldn't create your account.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    const user = await register({ name, email, password, role });
+localStorage.setItem("matchvol-user", JSON.stringify(user));
+
+if (user.role === "organization") {
+  navigate("/onboarding-organization");
+} else {
+  navigate("/Onboarding");
+}
   }
 
   return (

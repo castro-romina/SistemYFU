@@ -7,9 +7,10 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 app.use(cors({
-  origin: ["https://sistem-yfu-xkb4.vercel.app", "http://localhost:3000"],
+  origin: ["https://sistem-yfu-xkb4.vercel.app", "http://localhost:3000", "http://localhost:5173"],
   credentials: true
 }));
+
 app.use(express.json());
 app.use("/api/auth", authRouter);
 
