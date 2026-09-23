@@ -106,15 +106,16 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const forgotPassword = async (req: Request, res: Response) => {
-  const { email } = req.body;
+  const { email, role } = req.body;
 
   try {
-    if (!email) {
-      return res.status(400).json({ message: "Email is required." });
+    if (!email || !role) {
+      return res.status(400).json({ message: "Email and role are required." });
     }
 
-    const user = await prisma.fundacion.findUnique({ where: { email } })
-      || await prisma.voluntario.findUnique({ where: { email } });
+    const user = role === "organization"
+      ? await prisma.fundacion.findUnique({ where: { email } })
+      : await prisma.voluntario.findUnique({ where: { email } });
 
     if (!user) {
       return res.status(404).json({ message: "Email not found." });
@@ -124,7 +125,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
 
     await prisma.passwordReset.create({
-      data: { email, token, expiresAt }
+      data: { email, role, token, expiresAt }
     });
 
     const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${token}`;
@@ -162,17 +163,14 @@ export const resetPassword = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Invalid or expired token." });
     }
 
-    const email = reset.email;
-    const isOrganization = await prisma.fundacion.findUnique({ where: { email } });
-
-    if (isOrganization) {
+    if (reset.role === "organization") {
       await prisma.fundacion.update({
-        where: { email },
+        where: { email: reset.email },
         data: { password: newPassword }
       });
     } else {
       await prisma.voluntario.update({
-        where: { email },
+        where: { email: reset.email },
         data: { password: newPassword }
       });
     }

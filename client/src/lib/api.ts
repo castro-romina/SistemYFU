@@ -35,7 +35,7 @@ export async function register(data: any): Promise<any> {
   return response.json();
 }
 
-export async function forgotPassword(data: { email: string }): Promise<{ message: string }> {
+export async function forgotPassword(data: { email: string; role: AccountRole }): Promise<{ message: string }> {
   const response = await fetch(`${API_URL}/api/auth/forgot-password`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

@@ -13,46 +13,40 @@ model Fundacion {
   password    String
   descripcion String?
   createdAt   DateTime @default(now())
-
   tareas      Tarea[]
 }
 
 model Voluntario {
-  id             String   @id @default(cuid())
+  id             String        @id @default(cuid())
   nombre         String
-  email          String   @unique
+  email          String        @unique
   password       String
   intereses      String[]
   disponibilidad String?
-  createdAt      DateTime @default(now())
-
+  createdAt      DateTime      @default(now())
   postulaciones  Postulacion[]
 }
 
 model Tarea {
-  id          String    @id @default(cuid())
-  titulo      String
-  descripcion String
-  ubicacion   String?
-  fecha       DateTime?
-  activa      Boolean   @default(true)
-  createdAt   DateTime  @default(now())
-
-  fundacionId String
-  fundacion   Fundacion @relation(fields: [fundacionId], references: [id])
-
+  id            String        @id @default(cuid())
+  titulo        String
+  descripcion   String
+  ubicacion     String?
+  fecha         DateTime?
+  activa        Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  fundacionId   String
   postulaciones Postulacion[]
+  fundacion     Fundacion     @relation(fields: [fundacionId], references: [id])
 }
 
 model Postulacion {
-  id        String   @id @default(cuid())
-  estado    String   @default("pendiente")
-  createdAt DateTime @default(now())
-
+  id           String     @id @default(cuid())
+  estado       String     @default("pendiente")
+  createdAt    DateTime   @default(now())
   tareaId      String
-  tarea        Tarea      @relation(fields: [tareaId], references: [id])
-
   voluntarioId String
+  tarea        Tarea      @relation(fields: [tareaId], references: [id])
   voluntario   Voluntario @relation(fields: [voluntarioId], references: [id])
 
   @@unique([tareaId, voluntarioId])
@@ -61,6 +55,7 @@ model Postulacion {
 model PasswordReset {
   id        String   @id @default(cuid())
   email     String
+  role      String   @default("volunteer")
   token     String   @unique
   usado     Boolean  @default(false)
   expiresAt DateTime

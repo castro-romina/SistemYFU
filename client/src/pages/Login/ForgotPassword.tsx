@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import Button from "../../components/common/Button";
 import TextField from "../../components/common/TextField";
 import { forgotPassword } from "../../lib/api";
+import type { AccountRole } from "../../lib/api";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
+  const [role, setRole] = useState<AccountRole>("volunteer");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -17,7 +19,7 @@ export default function ForgotPassword() {
     setIsSubmitting(true);
 
     try {
-      const response = await forgotPassword({ email });
+      const response = await forgotPassword({ email, role });
       setMessage(response.message);
       setEmail("");
     } catch (err) {
@@ -42,6 +44,27 @@ export default function ForgotPassword() {
         </header>
 
         <form onSubmit={handleSubmit} className="auth-form">
+          <div className="flex gap-2 mb-4 justify-center">
+            <button
+              type="button"
+              onClick={() => setRole("volunteer")}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
+                role === "volunteer" ? "bg-pink-500 text-white" : "bg-gray-100 text-gray-600"
+              }`}
+            >
+              Volunteer
+            </button>
+            <button
+              type="button"
+              onClick={() => setRole("organization")}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition ${
+                role === "organization" ? "bg-pink-500 text-white" : "bg-gray-100 text-gray-600"
+              }`}
+            >
+              Organization
+            </button>
+          </div>
+
           <TextField 
             id="forgot-email" 
             label="Email address" 
