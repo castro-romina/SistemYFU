@@ -12,6 +12,8 @@ import Onboarding from "./pages/Onboarding/Onboarding-nominatim";
 import OnboardingStep2 from "./pages/Onboarding/OnboardingStep2";
 import OnboardingStep3 from "./pages/Onboarding/OnboardingStep3";
 import OnboardingStep4 from "./pages/Onboarding/OnboardingStep4";
+import ResetPassword from "./pages/Login/ResetPassword";
+
 
 export default function App() {
   return (
@@ -28,6 +30,7 @@ export default function App() {
       <Route path="/Onboarding/step2" element={<OnboardingStep2 />} />
       <Route path="/Onboarding/step3" element={<OnboardingStep3 />} />
       <Route path="/Onboarding/step4" element={<OnboardingStep4 />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
     </Routes>
   );
 }
