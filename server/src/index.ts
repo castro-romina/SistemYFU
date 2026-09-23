@@ -1,8 +1,8 @@
 import "dotenv/config"; 
 import express from "express";
 import cors from "cors";
-import { authRouter } from "./routes/auth";
-import { locationRouter } from "./routes/location";
+import { authRouter } from "./routes/auth.js";
+import { locationRouter } from "./routes/location.js";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
