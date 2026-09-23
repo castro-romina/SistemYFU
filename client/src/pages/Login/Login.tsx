@@ -24,7 +24,7 @@ export default function Login() {
     try {
       const user = await login({ email, password, role });
       localStorage.setItem("matchvol-user", JSON.stringify(user));
-      navigate("/InProgress", { state: { notice: `Welcome back, ${user.name}` } });""
+      navigate("/InProgress", { state: { notice: `Welcome back, ${user.name}` } });
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "We couldn't sign you in.");
     } finally {
@@ -47,19 +47,37 @@ export default function Login() {
         </header>
         
         <form onSubmit={handleSubmit} className="auth-form">
-          <TextField id="login-email" label="Email address" type="email" placeholder="example@email.com" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" required />
-          <TextField id="login-password" label="Password" type="password" placeholder="Your password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" required />
+          <TextField 
+            id="login-email" 
+            label="Email address" 
+            type="email" 
+            placeholder="example@email.com" 
+            value={email} 
+            onChange={(event) => setEmail(event.target.value)} 
+            autoComplete="email" 
+            required 
+          />
+          <TextField 
+            id="login-password" 
+            label="Password" 
+            type="password" 
+            placeholder="Your password" 
+            value={password} 
+            onChange={(event) => setPassword(event.target.value)} 
+            autoComplete="current-password" 
+            required 
+          />
           <RoleSelector value={role} onChange={setRole} />
           {error && <p className="auth-message auth-message--error" role="alert">{error}</p>}
           
-            <Button 
-              type="submit" 
-              disabled={isSubmitting} 
-              style={{ backgroundColor: '#ec4899', color: '#ffffff' }}
-              className="hover:bg-pink-600 font-semibold rounded-lg transition duration-200 py-3 shadow-md w-full"
-            >
-              {isSubmitting ? "Signing in..." : "Sign in"}
-            </Button>
+          <Button 
+            type="submit" 
+            disabled={isSubmitting} 
+            style={{ backgroundColor: '#ec4899', color: '#ffffff' }}
+            className="hover:bg-pink-600 font-semibold rounded-lg transition duration-200 py-3 shadow-md w-full"
+          >
+            {isSubmitting ? "Signing in..." : "Sign in"}
+          </Button>
         </form>
         
         <Link to="/forgot-password" className="auth-forgot text-pink-500 hover:text-pink-600 font-medium block text-center mt-4">
