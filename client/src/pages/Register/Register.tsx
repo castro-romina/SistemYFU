@@ -22,21 +22,36 @@ export default function Register() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError("");
-    if (email.trim().toLowerCase() !== confirmEmail.trim().toLowerCase()) return setError("Email addresses do not match.");
-    if (password !== confirmPassword) return setError("Passwords do not match.");
-    if (!acceptedTerms) return setError("You must accept the terms and privacy policy.");
+  event.preventDefault();
+  setError("");
+  
+  // Validar campos
+  if (!name.trim()) return setError("Name is required.");
+  if (!email.trim()) return setError("Email is required.");
+  if (email.trim().toLowerCase() !== confirmEmail.trim().toLowerCase()) return setError("Email addresses do not match.");
+  if (!password) return setError("Password is required.");
+  if (password !== confirmPassword) return setError("Passwords do not match.");
+  if (!acceptedTerms) return setError("You must accept the terms and privacy policy.");
 
+  try {
+    setIsSubmitting(true);
     const user = await register({ name, email, password, role });
-localStorage.setItem("matchvol-user", JSON.stringify(user));
+    localStorage.setItem("matchvol-user", JSON.stringify(user));
 
-if (user.role === "organization") {
-  navigate("/onboarding-organization");
-} else {
-  navigate("/Onboarding");
-}
+    if (user.role === "organization") {
+      navigate("/onboarding-organization");
+    } else {
+      navigate("/Onboarding");
+    }
+  } catch (err) {
+    setError(err instanceof Error ? err.message : "Registration failed. Please try again.");
+  } finally {
+    setIsSubmitting(false);
   }
+}
+
+ 
+  
 
   return (
     <div className="auth-shell">

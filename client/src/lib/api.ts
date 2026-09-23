@@ -7,10 +7,10 @@ interface AuthResponse {
   token: string;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
 export async function login(data: any): Promise<AuthResponse> {
-  const response = await fetch(`${API_URL}/auth/login`, {
+  const response = await fetch(`${API_URL}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
@@ -23,14 +23,11 @@ export async function login(data: any): Promise<AuthResponse> {
 }
 
 export async function register(data: any): Promise<any> {
-  const response = await fetch(`${API_URL}/auth/register`, {
+  const response = await fetch(`${API_URL}/api/auth/register`, {
     method: "POST",
-    headers: { 
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
-
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.message || "Server error 500");

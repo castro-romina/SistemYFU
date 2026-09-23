@@ -8,7 +8,7 @@ import Terms from "./pages/Terms/Terms";
 import Privacy from "./pages/Privacy/Privacy";
 import ForgotPassword from "./pages/Login/ForgotPassword"; 
 import InProcess from "./pages/InProgress/InProgress";
-import Onboarding from "./pages/Onboarding/Onboarding";
+import Onboarding from "./pages/Onboarding/Onboarding-nominatim";
 import OnboardingStep2 from "./pages/Onboarding/OnboardingStep2";
 import OnboardingStep3 from "./pages/Onboarding/OnboardingStep3";
 import OnboardingStep4 from "./pages/Onboarding/OnboardingStep4";

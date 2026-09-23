@@ -15,23 +15,65 @@ export const register = async (req: Request, res: Response) => {
 
     if (role === "organization") {
       const existingNGO = await prisma.fundacion.findUnique({ where: { email } });
-      if (existingNGO) return res.status(400).json({ message: "Email already registered as NGO." });
+      if (existingNGO) return res.status(400).json({ message: "Email already registered as organization." });
 
       const newNGO = await prisma.fundacion.create({
         data: { nombre: name, email, password, descripcion: "" }
       });
+
+      // Send welcome email
+      await resend.emails.send({
+        from: "MatchVol <onboarding@resend.dev>",
+        to: email,
+        subject: "Welcome to MatchVol!",
+        html: `
+          <h2>Welcome to MatchVol, ${name}!</h2>
+          <p>We're excited to have you join our community. Your account has been successfully created.</p>
+          <p>As an organization, you can now:</p>
+          <ul>
+            <li>Create volunteer opportunities</li>
+            <li>Connect with passionate volunteers</li>
+            <li>Make a real impact in your community</li>
+          </ul>
+          <p><a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/login" style="background-color: #ec4899; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; display: inline-block;">Start exploring MatchVol</a></p>
+          <p>If you have any questions, feel free to reach out to our support team.</p>
+          <p>Happy volunteering!<br>The MatchVol Team</p>
+        `
+      });
+
       return res.status(201).json({ name: newNGO.nombre, email: newNGO.email, role });
     } else {
       const existingVolunteer = await prisma.voluntario.findUnique({ where: { email } });
-      if (existingVolunteer) return res.status(400).json({ message: "Email already registered as Volunteer." });
+      if (existingVolunteer) return res.status(400).json({ message: "Email already registered as volunteer." });
 
       const newVolunteer = await prisma.voluntario.create({
         data: { nombre: name, email, password, disponibilidad: "" }
       });
+
+      // Send welcome email
+      await resend.emails.send({
+        from: "MatchVol <onboarding@resend.dev>",
+        to: email,
+        subject: "Welcome to MatchVol!",
+        html: `
+          <h2>Welcome to MatchVol, ${name}!</h2>
+          <p>We're thrilled to have you join our community of passionate volunteers. Your account has been successfully created.</p>
+          <p>Now you can:</p>
+          <ul>
+            <li>Discover meaningful volunteer opportunities</li>
+            <li>Connect with organizations that need your skills</li>
+            <li>Make a positive impact in your community</li>
+          </ul>
+          <p><a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/login" style="background-color: #ec4899; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; display: inline-block;">Start exploring opportunities</a></p>
+          <p>If you have any questions, feel free to reach out to our support team.</p>
+          <p>Happy volunteering!<br>The MatchVol Team</p>
+        `
+      });
+
       return res.status(201).json({ name: newVolunteer.nombre, email: newVolunteer.email, role });
     }
   } catch (error) {
-    console.error("Error en el registro:", error);
+    console.error("Error during registration:", error);
     return res.status(500).json({ message: "Internal server database error." });
   }
 };
@@ -58,7 +100,7 @@ export const login = async (req: Request, res: Response) => {
       return res.status(200).json({ name: volunteer.nombre, email: volunteer.email, role });
     }
   } catch (error) {
-    console.error("Error en el login:", error);
+    console.error("Error during login:", error);
     return res.status(500).json({ message: "Internal server database error." });
   }
 };
@@ -79,37 +121,32 @@ export const forgotPassword = async (req: Request, res: Response) => {
     }
 
     const token = randomBytes(32).toString("hex");
-    const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutos
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
 
     await prisma.passwordReset.create({
       data: { email, token, expiresAt }
     });
 
-    // ⚡ INICIALIZACIÓN SEGURA ACÁ ADENTRO:
-    // Al crearse adentro de la función, garantizamos que el .env ya fue leído por Node
-    const resend = new Resend(process.env.RESEND_API_KEY);
-
     const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${token}`;
 
     await resend.emails.send({
-      from: "MatchVol <onboarding@resend.dev>", // Mantenemos el sandbox de pruebas obligatorias
+      from: "MatchVol <onboarding@resend.dev>",
       to: email,
-      subject: "Restablecer tu contraseña en MatchVol",
+      subject: "Reset your password on MatchVol",
       html: `
-        <h2>¿Olvidaste tu contraseña?</h2>
-        <p>Haz clic en el enlace de abajo para restablecer tu contraseña. El enlace expira en 15 minutos.</p>
-        <a href="${resetLink}" style="background-color: #ec4899; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; display: inline-block;">Restablecer contraseña</a>
-        <p>Si no solicitaste esto, ignora este email.</p>
+        <h2>Forgot your password?</h2>
+        <p>Click the link below to reset your password. This link expires in 15 minutes.</p>
+        <a href="${resetLink}" style="background-color: #ec4899; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; display: inline-block;">Reset password</a>
+        <p>If you didn't request this, please ignore this email.</p>
       `
     });
 
     return res.status(200).json({ message: "Password reset link sent to your email." });
   } catch (error) {
-    console.error("Error en forgot-password:", error);
+    console.error("Error in forgot-password:", error);
     return res.status(500).json({ message: "Internal server error." });
   }
 };
-
 
 export const resetPassword = async (req: Request, res: Response) => {
   const { token, newPassword } = req.body;
@@ -147,7 +184,7 @@ export const resetPassword = async (req: Request, res: Response) => {
 
     return res.status(200).json({ message: "Password reset successfully." });
   } catch (error) {
-    console.error("Error en reset-password:", error);
+    console.error("Error in reset-password:", error);
     return res.status(500).json({ message: "Internal server error." });
   }
 };
