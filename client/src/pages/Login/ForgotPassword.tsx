@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import Button from "../../components/common/Button";
 import TextField from "../../components/common/TextField";
+import { forgotPassword } from "../../lib/api";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -16,20 +17,8 @@ export default function ForgotPassword() {
     setIsSubmitting(true);
 
     try {
-      // 🚀 Le pega directo a tu nuevo controlador del backend (Puerto 4000)
-      const response = await fetch("http://localhost:4000/api/auth/forgot-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Something went wrong.");
-      }
-
-      setMessage("We have sent a reset link to your email registry.");
+      const response = await forgotPassword({ email });
+      setMessage(response.message);
       setEmail("");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not send the email.");
