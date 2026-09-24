@@ -1,4 +1,6 @@
-export type AccountRole = "volunteer" | "organization";
+import { getToken, logout, type AccountRole } from "./auth";
+
+export type { AccountRole };
 
 interface AuthResponse {
   name: string;
@@ -8,6 +10,25 @@ interface AuthResponse {
 }
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
+
+// Para endpoints que requieren sesión: agrega el token y, si el servidor lo rechaza, cierra la sesión
+async function authFetch(path: string, options: RequestInit = {}): Promise<Response> {
+  const token = getToken();
+  const response = await fetch(`${API_URL}${path}`, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+
+  if (response.status === 401) {
+    logout();
+    window.location.replace("/login");
+    throw new Error("Your session expired. Please sign in again.");
+  }
+  return response;
+}
 
 export async function login(data: any): Promise<AuthResponse> {
   const response = await fetch(`${API_URL}/api/auth/login`, {
@@ -62,9 +83,8 @@ export async function resetPassword(data: { token: string; newPassword: string }
 }
 
 export async function completeOnboarding(data: any): Promise<any> {
-  const response = await fetch(`${API_URL}/api/auth/complete-onboarding`, {
+  const response = await authFetch("/api/auth/complete-onboarding", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
   if (!response.ok) {
@@ -75,9 +95,8 @@ export async function completeOnboarding(data: any): Promise<any> {
 }
 
 export async function completeOrgOnboarding(data: any): Promise<any> {
-  const response = await fetch(`${API_URL}/api/auth/complete-org-onboarding`, {
+  const response = await authFetch("/api/auth/complete-org-onboarding", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   });
   if (!response.ok) {

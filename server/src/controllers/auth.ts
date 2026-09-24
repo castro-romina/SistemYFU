@@ -2,8 +2,17 @@ import { Request, Response } from "express";
 import { prisma } from "../config/prisma.js";
 import { Resend } from "resend";
 import { randomBytes } from "crypto";
+import bcrypt from "bcryptjs";
+import { signToken, type AuthRequest } from "../middleware/auth.js";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+// Los hashes de bcrypt empiezan con "$2". Las cuentas viejas (contraseña en texto plano)
+// se siguen aceptando una vez y se convierten a hash al iniciar sesión.
+const isHashed = (value: string) => value.startsWith("$2");
+const hashPassword = (plain: string) => bcrypt.hash(plain, 10);
+const passwordMatches = async (plain: string, stored: string) =>
+  isHashed(stored) ? bcrypt.compare(plain, stored) : plain === stored;
 
 export const register = async (req: Request, res: Response) => {
   const { name, email, password, role } = req.body;
@@ -18,7 +27,13 @@ export const register = async (req: Request, res: Response) => {
       if (existingNGO) return res.status(400).json({ message: "Email already registered as organization." });
 
       const newNGO = await prisma.fundacion.create({
-        data: { nombre: name, email, password, descripcion: "" }
+        data: { 
+          nombre: name, 
+          email, 
+          password: await hashPassword(password), 
+          descripcion: "",
+          areasTrabajo: []
+        }
       });
 
       // Send welcome email (no esperar: si falla, el registro igual se completa)
@@ -29,13 +44,18 @@ export const register = async (req: Request, res: Response) => {
         html: `<h2>Welcome to MatchVol, ${name}!</h2><p>We're excited to have you join our community.</p>`
       }).catch(err => console.error("Email error:", err));
 
-      return res.status(201).json({ name: newNGO.nombre, email: newNGO.email, role });
+      return res.status(201).json({
+        name: newNGO.nombre,
+        email: newNGO.email,
+        role: "organization",
+        token: signToken({ email: newNGO.email, role: "organization" })
+      });
     } else {
       const existingVolunteer = await prisma.voluntario.findUnique({ where: { email } });
       if (existingVolunteer) return res.status(400).json({ message: "Email already registered as volunteer." });
 
       const newVolunteer = await prisma.voluntario.create({
-        data: { nombre: name, email, password }
+        data: { nombre: name, email, password: await hashPassword(password) }
       });
 
       // Send welcome email (no esperar)
@@ -46,7 +66,12 @@ export const register = async (req: Request, res: Response) => {
         html: `<h2>Welcome to MatchVol, ${name}!</h2><p>We're excited to have you join our community.</p>`
       }).catch(err => console.error("Email error:", err));
 
-      return res.status(201).json({ name: newVolunteer.nombre, email: newVolunteer.email, role });
+      return res.status(201).json({
+        name: newVolunteer.nombre,
+        email: newVolunteer.email,
+        role: "volunteer",
+        token: signToken({ email: newVolunteer.email, role: "volunteer" })
+      });
     }
   } catch (error) {
     console.error("Error during registration:", error);
@@ -64,16 +89,32 @@ export const login = async (req: Request, res: Response) => {
 
     if (role === "organization") {
       const ngo = await prisma.fundacion.findUnique({ where: { email } });
-      if (!ngo || ngo.password !== password) {
+      if (!ngo || !(await passwordMatches(password, ngo.password))) {
         return res.status(401).json({ message: "Invalid email or password." });
       }
-      return res.status(200).json({ name: ngo.nombre, email: ngo.email, role });
+      if (!isHashed(ngo.password)) {
+        await prisma.fundacion.update({ where: { email }, data: { password: await hashPassword(password) } });
+      }
+      return res.status(200).json({
+        name: ngo.nombre,
+        email: ngo.email,
+        role: "organization",
+        token: signToken({ email: ngo.email, role: "organization" })
+      });
     } else {
       const volunteer = await prisma.voluntario.findUnique({ where: { email } });
-      if (!volunteer || volunteer.password !== password) {
+      if (!volunteer || !(await passwordMatches(password, volunteer.password))) {
         return res.status(401).json({ message: "Invalid email or password." });
       }
-      return res.status(200).json({ name: volunteer.nombre, email: volunteer.email, role });
+      if (!isHashed(volunteer.password)) {
+        await prisma.voluntario.update({ where: { email }, data: { password: await hashPassword(password) } });
+      }
+      return res.status(200).json({
+        name: volunteer.nombre,
+        email: volunteer.email,
+        role: "volunteer",
+        token: signToken({ email: volunteer.email, role: "volunteer" })
+      });
     }
   } catch (error) {
     console.error("Error during login:", error);
@@ -134,17 +175,18 @@ export const resetPassword = async (req: Request, res: Response) => {
     }
 
     const email = reset.email;
+    const hashed = await hashPassword(newPassword);
     const isOrganization = await prisma.fundacion.findUnique({ where: { email } });
 
     if (isOrganization) {
       await prisma.fundacion.update({
         where: { email },
-        data: { password: newPassword }
+        data: { password: hashed }
       });
     } else {
       await prisma.voluntario.update({
         where: { email },
-        data: { password: newPassword }
+        data: { password: hashed }
       });
     }
 
@@ -161,18 +203,12 @@ export const resetPassword = async (req: Request, res: Response) => {
 };
 
 export const completeOnboarding = async (req: Request, res: Response) => {
-  console.log("Received data:", JSON.stringify(req.body, null, 2));
-  
-  const { email, fullName, fechaNacimiento, pais, telefono, ciudad, comoSeEntero, fotoPerfil, acercaDe, carrera, genero, linkedin, habilidades, experiencia, horasPorSemana, disponibilidad } = req.body;
+  // El email sale del token, no del cuerpo: nadie puede editar el perfil de otra persona
+  const email = (req as AuthRequest).user!.email;
+
+  const { fullName, fechaNacimiento, pais, telefono, ciudad, comoSeEntero, fotoPerfil, acercaDe, carrera, genero, linkedin, habilidades, experiencia, horasPorSemana, disponibilidad } = req.body;
 
   try {
-    if (!email) {
-      return res.status(400).json({ message: "Email is required." });
-    }
-
-    console.log("Habilidades type:", typeof habilidades, "Value:", habilidades);
-    console.log("Disponibilidad type:", typeof disponibilidad, "Value:", disponibilidad);
-
     const updateData: any = {};
     
     if (fullName) updateData.nombre = fullName;
@@ -191,13 +227,12 @@ export const completeOnboarding = async (req: Request, res: Response) => {
     if (horasPorSemana) updateData.horasPorSemana = horasPorSemana;
     if (disponibilidad) updateData.disponibilidad = Array.isArray(disponibilidad) ? JSON.stringify(disponibilidad) : disponibilidad;
 
-    console.log("Update data:", JSON.stringify(updateData, null, 2));
-
-    const volunteer = await prisma.voluntario.update({
+    const updated = await prisma.voluntario.update({
       where: { email },
       data: updateData
     });
 
+    const { password, ...volunteer } = updated;
     return res.status(200).json({ message: "Onboarding completed successfully", volunteer });
   } catch (error) {
     console.error("Error completing onboarding:", error);
@@ -206,16 +241,15 @@ export const completeOnboarding = async (req: Request, res: Response) => {
 };
 
 export const completeOrgOnboarding = async (req: Request, res: Response) => {
+  // El email sale del token, no del cuerpo
+  const email = (req as AuthRequest).user!.email;
+
   const {
-    email, nombre, tipo, pais, ciudad, telefono, logo,
+    nombre, tipo, pais, ciudad, telefono, logo,
     descripcion, mision, areasTrabajo, sitioWeb, linkedin, instagram, cuit,
   } = req.body;
 
   try {
-    if (!email) {
-      return res.status(400).json({ message: "Email is required." });
-    }
-
     const required = { nombre, tipo, pais, ciudad, telefono, descripcion, sitioWeb, linkedin, cuit };
     const missing = Object.entries(required)
       .filter(([, value]) => typeof value !== "string" || !value.trim())
