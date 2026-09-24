@@ -21,24 +21,11 @@ export const register = async (req: Request, res: Response) => {
         data: { nombre: name, email, password, descripcion: "" }
       });
 
-      // Send welcome email
       await resend.emails.send({
         from: "MatchVol <onboarding@resend.dev>",
         to: email,
         subject: "Welcome to MatchVol!",
-        html: `
-          <h2>Welcome to MatchVol, ${name}!</h2>
-          <p>We're excited to have you join our community. Your account has been successfully created.</p>
-          <p>As an organization, you can now:</p>
-          <ul>
-            <li>Create volunteer opportunities</li>
-            <li>Connect with passionate volunteers</li>
-            <li>Make a real impact in your community</li>
-          </ul>
-          <p><a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/login" style="background-color: #ec4899; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; display: inline-block;">Start exploring MatchVol</a></p>
-          <p>If you have any questions, feel free to reach out to our support team.</p>
-          <p>Happy volunteering!<br>The MatchVol Team</p>
-        `
+        html: `<h2>Welcome to MatchVol, ${name}!</h2><p>We're excited to have you join our community.</p>`
       });
 
       return res.status(201).json({ name: newNGO.nombre, email: newNGO.email, role });
@@ -47,27 +34,14 @@ export const register = async (req: Request, res: Response) => {
       if (existingVolunteer) return res.status(400).json({ message: "Email already registered as volunteer." });
 
       const newVolunteer = await prisma.voluntario.create({
-        data: { nombre: name, email, password, disponibilidad: "" }
+        data: { nombre: name, email, password }
       });
 
-      // Send welcome email
       await resend.emails.send({
         from: "MatchVol <onboarding@resend.dev>",
         to: email,
         subject: "Welcome to MatchVol!",
-        html: `
-          <h2>Welcome to MatchVol, ${name}!</h2>
-          <p>We're thrilled to have you join our community of passionate volunteers. Your account has been successfully created.</p>
-          <p>Now you can:</p>
-          <ul>
-            <li>Discover meaningful volunteer opportunities</li>
-            <li>Connect with organizations that need your skills</li>
-            <li>Make a positive impact in your community</li>
-          </ul>
-          <p><a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/login" style="background-color: #ec4899; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; display: inline-block;">Start exploring opportunities</a></p>
-          <p>If you have any questions, feel free to reach out to our support team.</p>
-          <p>Happy volunteering!<br>The MatchVol Team</p>
-        `
+        html: `<h2>Welcome to MatchVol, ${name}!</h2><p>We're thrilled to have you join us.</p>`
       });
 
       return res.status(201).json({ name: newVolunteer.nombre, email: newVolunteer.email, role });
@@ -106,16 +80,15 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const forgotPassword = async (req: Request, res: Response) => {
-  const { email, role } = req.body;
+  const { email } = req.body;
 
   try {
-    if (!email || !role) {
-      return res.status(400).json({ message: "Email and role are required." });
+    if (!email) {
+      return res.status(400).json({ message: "Email is required." });
     }
 
-    const user = role === "organization"
-      ? await prisma.fundacion.findUnique({ where: { email } })
-      : await prisma.voluntario.findUnique({ where: { email } });
+    const user = await prisma.fundacion.findUnique({ where: { email } })
+      || await prisma.voluntario.findUnique({ where: { email } });
 
     if (!user) {
       return res.status(404).json({ message: "Email not found." });
@@ -125,7 +98,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
     const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
 
     await prisma.passwordReset.create({
-      data: { email, role, token, expiresAt }
+      data: { email, token, expiresAt }
     });
 
     const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${token}`;
@@ -134,12 +107,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
       from: "MatchVol <onboarding@resend.dev>",
       to: email,
       subject: "Reset your password on MatchVol",
-      html: `
-        <h2>Forgot your password?</h2>
-        <p>Click the link below to reset your password. This link expires in 15 minutes.</p>
-        <a href="${resetLink}" style="background-color: #ec4899; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; display: inline-block;">Reset password</a>
-        <p>If you didn't request this, please ignore this email.</p>
-      `
+      html: `<h2>Forgot your password?</h2><p>Click the link below to reset your password.</p><a href="${resetLink}">Reset password</a>`
     });
 
     return res.status(200).json({ message: "Password reset link sent to your email." });
@@ -163,14 +131,17 @@ export const resetPassword = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Invalid or expired token." });
     }
 
-    if (reset.role === "organization") {
+    const email = reset.email;
+    const isOrganization = await prisma.fundacion.findUnique({ where: { email } });
+
+    if (isOrganization) {
       await prisma.fundacion.update({
-        where: { email: reset.email },
+        where: { email },
         data: { password: newPassword }
       });
     } else {
       await prisma.voluntario.update({
-        where: { email: reset.email },
+        where: { email },
         data: { password: newPassword }
       });
     }
@@ -208,10 +179,10 @@ export const completeOnboarding = async (req: Request, res: Response) => {
     if (carrera) updateData.carrera = carrera;
     if (genero) updateData.genero = genero;
     if (linkedin) updateData.linkedin = linkedin;
-    if (habilidades && Array.isArray(habilidades)) updateData.habilidades = habilidades;
+    if (habilidades) updateData.habilidades = JSON.stringify(habilidades);
     if (experiencia) updateData.experiencia = experiencia;
     if (horasPorSemana) updateData.horasPorSemana = horasPorSemana;
-    if (disponibilidad && Array.isArray(disponibilidad)) updateData.disponibilidad = disponibilidad;
+    if (disponibilidad) updateData.disponibilidad = JSON.stringify(disponibilidad);
 
     const volunteer = await prisma.voluntario.update({
       where: { email },
