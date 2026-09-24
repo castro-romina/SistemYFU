@@ -157,26 +157,35 @@ export default function OnboardingStep2() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+  e.preventDefault();
+  setIsLoading(true);
 
-    try {
-      const careerToSave = career === "Other" ? otherCareer : career;
-      
-      localStorage.setItem("onboarding-step2", JSON.stringify({
-        profilePhoto,
-        aboutYou,
-        career: careerToSave,
-        gender,
-        linkedIn
-      }));
-      navigate("/Onboarding/step3");
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setIsLoading(false);
+  try {
+    let fotoBase64 = null;
+    if (profilePhoto) {
+      fotoBase64 = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target?.result as string);
+        reader.readAsDataURL(profilePhoto);
+      });
     }
-  };
+
+    const careerToSave = career === "Other" ? otherCareer : career;
+    
+    localStorage.setItem("onboarding-step2", JSON.stringify({
+      fotoPerfil: fotoBase64,
+      aboutYou,
+      career: careerToSave,
+      gender,
+      linkedIn
+    }));
+    navigate("/Onboarding/step3");
+  } catch (error) {
+    console.error("Error:", error);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="auth-shell">

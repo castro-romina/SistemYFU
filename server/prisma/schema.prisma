@@ -1,21 +1,3 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "postgresql"
-}
-
-model Fundacion {
-  id          String   @id @default(cuid())
-  nombre      String
-  email       String   @unique
-  password    String
-  descripcion String?
-  createdAt   DateTime @default(now())
-  tareas      Tarea[]
-}
-
 model Voluntario {
   id             String        @id @default(cuid())
   nombre         String
@@ -37,49 +19,14 @@ model Voluntario {
   linkedin       String?
   
   // Step 3
-  habilidades    String[]      @default([])
+  habilidades    String?      // Cambié de String[] a String?
   experiencia    String?
   horasPorSemana String?
-  disponibilidad String[]      @default([])
+  disponibilidad String?      // Cambié de String[] a String?
   
   // Legacy
   intereses      String[]      @default([])
   
   createdAt      DateTime      @default(now())
   postulaciones  Postulacion[]
-}
-
-model Tarea {
-  id            String        @id @default(cuid())
-  titulo        String
-  descripcion   String
-  ubicacion     String?
-  fecha         DateTime?
-  activa        Boolean       @default(true)
-  createdAt     DateTime      @default(now())
-  fundacionId   String
-  postulaciones Postulacion[]
-  fundacion     Fundacion     @relation(fields: [fundacionId], references: [id])
-}
-
-model Postulacion {
-  id           String     @id @default(cuid())
-  estado       String     @default("pendiente")
-  createdAt    DateTime   @default(now())
-  tareaId      String
-  voluntarioId String
-  tarea        Tarea      @relation(fields: [tareaId], references: [id])
-  voluntario   Voluntario @relation(fields: [voluntarioId], references: [id])
-
-  @@unique([tareaId, voluntarioId])
-}
-
-model PasswordReset {
-  id        String   @id @default(cuid())
-  email     String
-  role      String   @default("volunteer")
-  token     String   @unique
-  usado     Boolean  @default(false)
-  expiresAt DateTime
-  createdAt DateTime @default(now())
 }
