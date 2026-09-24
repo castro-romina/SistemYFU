@@ -5,7 +5,7 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
-
+//
 model Fundacion {
   id          String   @id @default(cuid())
   nombre      String
