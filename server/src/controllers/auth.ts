@@ -195,25 +195,27 @@ export const completeOnboarding = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Email is required." });
     }
 
+    const updateData: any = {};
+    
+    if (fullName) updateData.nombre = fullName;
+    if (fechaNacimiento) updateData.fechaNacimiento = new Date(fechaNacimiento);
+    if (pais) updateData.pais = pais;
+    if (telefono) updateData.telefono = telefono;
+    if (ciudad) updateData.ciudad = ciudad;
+    if (comoSeEntero) updateData.comoSeEntero = comoSeEntero;
+    if (fotoPerfil) updateData.fotoPerfil = fotoPerfil;
+    if (acercaDe) updateData.acercaDe = acercaDe;
+    if (carrera) updateData.carrera = carrera;
+    if (genero) updateData.genero = genero;
+    if (linkedin) updateData.linkedin = linkedin;
+    if (habilidades) updateData.habilidades = habilidades;
+    if (experiencia) updateData.experiencia = experiencia;
+    if (horasPorSemana) updateData.horasPorSemana = horasPorSemana;
+    if (disponibilidad) updateData.disponibilidad = disponibilidad;
+
     const volunteer = await prisma.voluntario.update({
       where: { email },
-      data: {
-        nombre: fullName || undefined,
-        fechaNacimiento: fechaNacimiento ? new Date(fechaNacimiento) : undefined,
-        pais,
-        telefono,
-        ciudad,
-        comoSeEntero,
-        fotoPerfil,
-        acercaDe,
-        carrera,
-        genero,
-        linkedin,
-        habilidades: habilidades || [],
-        experiencia,
-        horasPorSemana,
-        disponibilidad: disponibilidad || []
-      }
+      data: updateData
     });
 
     return res.status(200).json({ message: "Onboarding completed successfully", volunteer });

@@ -17,11 +17,13 @@ export default function OnboardingStep4() {
     setUserData({ ...user, ...step1, ...step2, ...step3 });
   }, []);
 
+
   const handleFinish = async () => {
     setIsLoading(true);
     try {
-      const response = await completeOnboarding(userData);
+      await completeOnboarding(userData);
       
+      // Limpiar localStorage
       localStorage.removeItem("onboarding-step1");
       localStorage.removeItem("onboarding-step2");
       localStorage.removeItem("onboarding-step3");
