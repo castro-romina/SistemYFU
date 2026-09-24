@@ -8,5 +8,12 @@
    
   "resend": "^6.28.0"
  
+  },
+ 
+  "devDependencies": {
+ 
+   
+  "@types/express-rate-limit": "^5.1.3"
+ 
   }
 }
