@@ -19,22 +19,23 @@ export default function OnboardingStep4() {
 
 
   const handleFinish = async () => {
-    setIsLoading(true);
-    try {
-      await completeOnboarding(userData);
-      
-      // Limpiar localStorage
-      localStorage.removeItem("onboarding-step1");
-      localStorage.removeItem("onboarding-step2");
-      localStorage.removeItem("onboarding-step3");
+  setIsLoading(true);
+  try {
+    console.log("userData:", userData);
+    const response = await completeOnboarding(userData);
+    console.log("Response:", response);
+    
+    localStorage.removeItem("onboarding-step1");
+    localStorage.removeItem("onboarding-step2");
+    localStorage.removeItem("onboarding-step3");
 
-      navigate("/InProgress");
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    navigate("/InProgress");
+  } catch (error) {
+    console.error("Catch error:", error);
+    alert("Error: " + (error instanceof Error ? error.message : "Unknown error"));
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="auth-shell">
