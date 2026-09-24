@@ -159,12 +159,17 @@ export const resetPassword = async (req: Request, res: Response) => {
 };
 
 export const completeOnboarding = async (req: Request, res: Response) => {
+  console.log("Received data:", JSON.stringify(req.body, null, 2));
+  
   const { email, fullName, fechaNacimiento, pais, telefono, ciudad, comoSeEntero, fotoPerfil, acercaDe, carrera, genero, linkedin, habilidades, experiencia, horasPorSemana, disponibilidad } = req.body;
 
   try {
     if (!email) {
       return res.status(400).json({ message: "Email is required." });
     }
+
+    console.log("Habilidades type:", typeof habilidades, "Value:", habilidades);
+    console.log("Disponibilidad type:", typeof disponibilidad, "Value:", disponibilidad);
 
     const updateData: any = {};
     
@@ -179,10 +184,12 @@ export const completeOnboarding = async (req: Request, res: Response) => {
     if (carrera) updateData.carrera = carrera;
     if (genero) updateData.genero = genero;
     if (linkedin) updateData.linkedin = linkedin;
-    if (habilidades) updateData.habilidades = JSON.stringify(habilidades);
+    if (habilidades) updateData.habilidades = Array.isArray(habilidades) ? JSON.stringify(habilidades) : habilidades;
     if (experiencia) updateData.experiencia = experiencia;
     if (horasPorSemana) updateData.horasPorSemana = horasPorSemana;
-    if (disponibilidad) updateData.disponibilidad = JSON.stringify(disponibilidad);
+    if (disponibilidad) updateData.disponibilidad = Array.isArray(disponibilidad) ? JSON.stringify(disponibilidad) : disponibilidad;
+
+    console.log("Update data:", JSON.stringify(updateData, null, 2));
 
     const volunteer = await prisma.voluntario.update({
       where: { email },
