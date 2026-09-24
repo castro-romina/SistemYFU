@@ -37,12 +37,15 @@ export const register = async (req: Request, res: Response) => {
         data: { nombre: name, email, password }
       });
 
-      await resend.emails.send({
-        from: "MatchVol <onboarding@resend.dev>",
-        to: email,
-        subject: "Welcome to MatchVol!",
-        html: `<h2>Welcome to MatchVol, ${name}!</h2><p>We're thrilled to have you join us.</p>`
-      });
+      // Send welcome email (no esperar)
+resend.emails.send({
+  from: "MatchVol <onboarding@resend.dev>",
+  to: email,
+  subject: "Welcome to MatchVol!",
+  html: `<h2>Welcome to MatchVol, ${name}!</h2><p>We're excited to have you join our community.</p>`
+}).catch(err => console.error("Email error:", err));
+
+return res.status(201).json({ name: newVolunteer.nombre, email: newVolunteer.email, role });
 
       return res.status(201).json({ name: newVolunteer.nombre, email: newVolunteer.email, role });
     }
