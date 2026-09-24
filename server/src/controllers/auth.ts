@@ -208,10 +208,10 @@ export const completeOnboarding = async (req: Request, res: Response) => {
     if (carrera) updateData.carrera = carrera;
     if (genero) updateData.genero = genero;
     if (linkedin) updateData.linkedin = linkedin;
-    if (habilidades) updateData.habilidades = habilidades;
+    if (habilidades && Array.isArray(habilidades)) updateData.habilidades = habilidades;
     if (experiencia) updateData.experiencia = experiencia;
     if (horasPorSemana) updateData.horasPorSemana = horasPorSemana;
-    if (disponibilidad) updateData.disponibilidad = disponibilidad;
+    if (disponibilidad && Array.isArray(disponibilidad)) updateData.disponibilidad = disponibilidad;
 
     const volunteer = await prisma.voluntario.update({
       where: { email },
