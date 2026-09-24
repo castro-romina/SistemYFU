@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Landing from "./pages/Landing/Landing";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
@@ -13,6 +13,10 @@ import OnboardingStep2 from "./pages/Onboarding/OnboardingStep2";
 import OnboardingStep3 from "./pages/Onboarding/OnboardingStep3";
 import OnboardingStep4 from "./pages/Onboarding/OnboardingStep4";
 import ResetPassword from "./pages/Login/ResetPassword";
+import OrgStep1 from "./pages/OnboardingOrg/OrgStep1";
+import OrgStep2 from "./pages/OnboardingOrg/OrgStep2";
+import OrgStep3 from "./pages/OnboardingOrg/OrgStep3";
+import OrgStep4 from "./pages/OnboardingOrg/OrgStep4";
 
 
 export default function App() {
@@ -31,6 +35,11 @@ export default function App() {
       <Route path="/Onboarding/step3" element={<OnboardingStep3 />} />
       <Route path="/Onboarding/step4" element={<OnboardingStep4 />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/OnboardingOrg" element={<OrgStep1 />} />
+      <Route path="/OnboardingOrg/step2" element={<OrgStep2 />} />
+      <Route path="/OnboardingOrg/step3" element={<OrgStep3 />} />
+      <Route path="/OnboardingOrg/step4" element={<OrgStep4 />} />
+      <Route path="/onboarding-organization" element={<Navigate to="/OnboardingOrg" replace />} />
     </Routes>
   );
 }

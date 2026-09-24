@@ -21,12 +21,13 @@ export const register = async (req: Request, res: Response) => {
         data: { nombre: name, email, password, descripcion: "" }
       });
 
-      await resend.emails.send({
+      // Send welcome email (no esperar: si falla, el registro igual se completa)
+      resend.emails.send({
         from: "MatchVol <onboarding@resend.dev>",
         to: email,
         subject: "Welcome to MatchVol!",
         html: `<h2>Welcome to MatchVol, ${name}!</h2><p>We're excited to have you join our community.</p>`
-      });
+      }).catch(err => console.error("Email error:", err));
 
       return res.status(201).json({ name: newNGO.nombre, email: newNGO.email, role });
     } else {
@@ -38,14 +39,12 @@ export const register = async (req: Request, res: Response) => {
       });
 
       // Send welcome email (no esperar)
-resend.emails.send({
-  from: "MatchVol <onboarding@resend.dev>",
-  to: email,
-  subject: "Welcome to MatchVol!",
-  html: `<h2>Welcome to MatchVol, ${name}!</h2><p>We're excited to have you join our community.</p>`
-}).catch(err => console.error("Email error:", err));
-
-return res.status(201).json({ name: newVolunteer.nombre, email: newVolunteer.email, role });
+      resend.emails.send({
+        from: "MatchVol <onboarding@resend.dev>",
+        to: email,
+        subject: "Welcome to MatchVol!",
+        html: `<h2>Welcome to MatchVol, ${name}!</h2><p>We're excited to have you join our community.</p>`
+      }).catch(err => console.error("Email error:", err));
 
       return res.status(201).json({ name: newVolunteer.nombre, email: newVolunteer.email, role });
     }
@@ -202,6 +201,60 @@ export const completeOnboarding = async (req: Request, res: Response) => {
     return res.status(200).json({ message: "Onboarding completed successfully", volunteer });
   } catch (error) {
     console.error("Error completing onboarding:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+export const completeOrgOnboarding = async (req: Request, res: Response) => {
+  const {
+    email, nombre, tipo, pais, ciudad, telefono, logo,
+    descripcion, mision, areasTrabajo, sitioWeb, linkedin, instagram, cuit,
+  } = req.body;
+
+  try {
+    if (!email) {
+      return res.status(400).json({ message: "Email is required." });
+    }
+
+    const required = { nombre, tipo, pais, ciudad, telefono, descripcion, sitioWeb, linkedin, cuit };
+    const missing = Object.entries(required)
+      .filter(([, value]) => typeof value !== "string" || !value.trim())
+      .map(([key]) => key);
+    if (!Array.isArray(areasTrabajo) || areasTrabajo.length === 0) missing.push("areasTrabajo");
+
+    if (missing.length > 0) {
+      return res.status(400).json({ message: `Missing required fields: ${missing.join(", ")}` });
+    }
+
+    const existing = await prisma.fundacion.findUnique({ where: { email } });
+    if (!existing) {
+      return res.status(404).json({ message: "Organization not found." });
+    }
+
+    const updated = await prisma.fundacion.update({
+      where: { email },
+      data: {
+        nombre: nombre.trim(),
+        tipo,
+        pais,
+        ciudad,
+        telefono,
+        logo: logo || null,
+        descripcion: descripcion.trim(),
+        mision: mision?.trim() || null,
+        areasTrabajo: areasTrabajo.map(String),
+        sitioWeb: sitioWeb.trim(),
+        linkedin: linkedin.trim(),
+        instagram: instagram?.trim() || null,
+        cuit: cuit.trim(),
+      },
+    });
+
+    // No devolvemos la contraseña
+    const { password, ...organization } = updated;
+    return res.status(200).json({ message: "Organization onboarding completed successfully", organization });
+  } catch (error) {
+    console.error("Error completing organization onboarding:", error);
     return res.status(500).json({ message: "Internal server error." });
   }
 };

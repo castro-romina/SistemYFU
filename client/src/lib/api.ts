@@ -73,3 +73,16 @@ export async function completeOnboarding(data: any): Promise<any> {
   }
   return response.json();
 }
+
+export async function completeOrgOnboarding(data: any): Promise<any> {
+  const response = await fetch(`${API_URL}/api/auth/complete-org-onboarding`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || "Failed to complete organization onboarding.");
+  }
+  return response.json();
+}

@@ -7,45 +7,57 @@ datasource db {
 }
 
 model Fundacion {
-  id          String   @id @default(cuid())
-  nombre      String
-  email       String   @unique
-  password    String
-  descripcion String?
-  createdAt   DateTime @default(now())
-  tareas      Tarea[]
+  id            String   @id @default(cuid())
+  nombre        String
+  email         String   @unique
+  password      String
+  descripcion   String?
+  createdAt     DateTime @default(now())
+  tareas        Tarea[]
+
+  tipo          String?
+  pais          String?
+  ciudad        String?
+  telefono      String?
+  logo          String?
+  mision        String?
+  sitioWeb      String?
+  linkedin      String?
+  instagram     String?
+  areasTrabajo  String[] @default([])
+  cuit          String?
 }
 
 model Voluntario {
-  id             String        @id @default(cuid())
-  nombre         String
-  email          String        @unique
-  password       String
-  
+  id              String        @id @default(cuid())
+  nombre          String
+  email           String        @unique
+  password        String
+
   // Step 1
   fechaNacimiento DateTime?
-  pais           String?
-  telefono       String?
-  ciudad         String?
-  comoSeEntero   String?
-  
+  pais            String?
+  telefono        String?
+  ciudad          String?
+  comoSeEntero    String?
+
   // Step 2
-  fotoPerfil     String?
-  acercaDe       String?
-  carrera        String?
-  genero         String?
-  linkedin       String?
-  
+  fotoPerfil      String?
+  acercaDe        String?
+  carrera         String?
+  genero          String?
+  linkedin        String?
+
   // Step 3
-  habilidades    String?
-  experiencia    String?
-  horasPorSemana String?
-  disponibilidad String?
-  
-  intereses      String[]      @default([])
-  
-  createdAt      DateTime      @default(now())
-  postulaciones  Postulacion[]
+  habilidades     String?
+  experiencia     String?
+  horasPorSemana  String?
+  disponibilidad  String?
+
+  intereses       String[]      @default([])
+
+  createdAt       DateTime      @default(now())
+  postulaciones   Postulacion[]
 }
 
 model Tarea {

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { register, login, forgotPassword, resetPassword, completeOnboarding } from "../controllers/auth.js";
+import { register, login, forgotPassword, resetPassword, completeOnboarding, completeOrgOnboarding } from "../controllers/auth.js";
 
 export const authRouter = Router();
 
@@ -8,5 +8,6 @@ authRouter.post("/login", login);
 authRouter.post("/forgot-password", forgotPassword);
 authRouter.post("/reset-password", resetPassword);
 authRouter.post("/complete-onboarding", completeOnboarding);
+authRouter.post("/complete-org-onboarding", completeOrgOnboarding);
 
 
