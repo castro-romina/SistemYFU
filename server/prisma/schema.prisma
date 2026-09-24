@@ -21,8 +21,30 @@ model Voluntario {
   nombre         String
   email          String        @unique
   password       String
-  intereses      String[]
-  disponibilidad String?
+  
+  // Step 1
+  fechaNacimiento DateTime?
+  pais           String?
+  telefono       String?
+  ciudad         String?
+  comoSeEntero   String?
+  
+  // Step 2
+  fotoPerfil     String?
+  acercaDe       String?
+  carrera        String?
+  genero         String?
+  linkedin       String?
+  
+  // Step 3
+  habilidades    String[]      @default([])
+  experiencia    String?
+  horasPorSemana String?
+  disponibilidad String[]      @default([])
+  
+  // Legacy
+  intereses      String[]      @default([])
+  
   createdAt      DateTime      @default(now())
   postulaciones  Postulacion[]
 }
