@@ -186,3 +186,39 @@ export const resetPassword = async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 };
+
+export const completeOnboarding = async (req: Request, res: Response) => {
+  const { email, fullName, fechaNacimiento, pais, telefono, ciudad, comoSeEntero, fotoPerfil, acercaDe, carrera, genero, linkedin, habilidades, experiencia, horasPorSemana, disponibilidad } = req.body;
+
+  try {
+    if (!email) {
+      return res.status(400).json({ message: "Email is required." });
+    }
+
+    const volunteer = await prisma.voluntario.update({
+      where: { email },
+      data: {
+        nombre: fullName || undefined,
+        fechaNacimiento: fechaNacimiento ? new Date(fechaNacimiento) : undefined,
+        pais,
+        telefono,
+        ciudad,
+        comoSeEntero,
+        fotoPerfil,
+        acercaDe,
+        carrera,
+        genero,
+        linkedin,
+        habilidades: habilidades || [],
+        experiencia,
+        horasPorSemana,
+        disponibilidad: disponibilidad || []
+      }
+    });
+
+    return res.status(200).json({ message: "Onboarding completed successfully", volunteer });
+  } catch (error) {
+    console.error("Error completing onboarding:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};

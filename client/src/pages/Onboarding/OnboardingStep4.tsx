@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/common/Button";
+import { completeOnboarding } from "../../lib/api";
 
 export default function OnboardingStep4() {
   const navigate = useNavigate();
@@ -19,10 +20,8 @@ export default function OnboardingStep4() {
   const handleFinish = async () => {
     setIsLoading(true);
     try {
-      // Aquí guardarías todo en la BD
-      // await saveOnboardingData(userData);
+      const response = await completeOnboarding(userData);
       
-      // Limpiar localStorage
       localStorage.removeItem("onboarding-step1");
       localStorage.removeItem("onboarding-step2");
       localStorage.removeItem("onboarding-step3");
