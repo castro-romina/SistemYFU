@@ -37,8 +37,15 @@ export async function login(data: any): Promise<AuthResponse> {
     body: JSON.stringify(data),
   });
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Failed to sign in.");
+    let message = "Failed to sign in.";
+    try {
+      const errorData = await response.json();
+      message = errorData.message || message;
+    } catch {
+      const text = await response.text().catch(() => "");
+      if (text) message = text;
+    }
+    throw new Error(message);
   }
   return response.json();
 }
