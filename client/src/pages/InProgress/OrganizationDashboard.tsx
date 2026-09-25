@@ -5,6 +5,12 @@ import {
   SKILLS_OPTIONS, AREAS_OPTIONS, type Opportunity,
 } from "../../lib/mockData";
 import ChipSelect from "../../components/common/ChipSelect";
+import DashboardLayout from "../../components/layout/DashboardLayout";
+import type { NavItem } from "../../components/layout/Sidebar";
+
+const NAV_ITEMS: NavItem[] = [
+  { label: "Home", to: "/InProgress", icon: "🏠" },
+];
 
 const emptyForm = {
   title: "", description: "", location: "", areaTrabajo: "",
@@ -47,19 +53,14 @@ export default function OrganizationDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="max-w-4xl mx-auto">
+    <DashboardLayout navItems={NAV_ITEMS} title="Home">
+      <div className="max-w-4xl">
         <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="font-bold text-2xl">
-              Hi, <span className="text-pink-500">{user?.name}</span> 👋
-            </h1>
-            <p className="text-gray-600">Manage your open opportunities and applicants.</p>
-          </div>
+          <p className="text-sm text-gray-500">Manage your open opportunities and applicants.</p>
           <button
             onClick={() => setShowForm(true)}
             style={{ backgroundColor: "#ec4899", color: "#ffffff" }}
-            className="font-semibold rounded-lg py-2 px-4 hover:bg-pink-600 transition"
+            className="font-semibold rounded-lg py-2 px-4 hover:bg-pink-600 transition text-sm"
           >
             + Post opportunity
           </button>
@@ -226,6 +227,6 @@ export default function OrganizationDashboard() {
           </div>
         </div>
       )}
-    </div>
+    </DashboardLayout>
   );
 }

@@ -36,10 +36,11 @@ export default function App() {
   <Route path="/settings" element={<Settings />} />
 </Route>
 
+<Route path="/register" element={<Register />} />
+
       {/* Solo sin sesión: con sesión iniciada no se puede volver acá */}
       <Route element={<GuestRoute />}>
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
       </Route>
 

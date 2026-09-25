@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { getUser } from "../../lib/auth";
 import {
   getOpportunities, getMyApplications, applyToOpportunity,
   getQuickProfile, calculateMatch, AREAS_OPTIONS, type Opportunity,
 } from "../../lib/mockData";
+import DashboardLayout from "../../components/layout/DashboardLayout";
+import type { NavItem } from "../../components/layout/Sidebar";
+
+const NAV_ITEMS: NavItem[] = [
+  { label: "Home", to: "/InProgress", icon: "🏠" },
+];
 
 export default function VolunteerDashboard() {
-  const user = getUser();
   const profile = getQuickProfile();
   const [opportunities] = useState<Opportunity[]>(getOpportunities());
   const [myApplications, setMyApplications] = useState<string[]>(getMyApplications());
@@ -32,30 +35,16 @@ export default function VolunteerDashboard() {
     .sort((a, b) => b.match - a.match);
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Top nav */}
-      <nav className="border-b border-gray-200 px-4 py-3 flex justify-between items-center">
-        <span className="font-display font-bold text-lg">
-          <span className="text-purple-600">Match</span><span className="text-pink-500">Vol</span>
-        </span>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-600 hidden sm:inline">Hi, {user?.name}</span>
-          <Link to="/settings" className="text-sm font-semibold text-purple-600 hover:underline">
-            Settings
-          </Link>
-        </div>
-      </nav>
-
-      <div className="max-w-3xl mx-auto px-4 py-6">
-        <h1 className="font-bold text-xl mb-1">Opportunities for you</h1>
-        <p className="text-sm text-gray-500 mb-5">Sorted by how well they match your profile.</p>
+    <DashboardLayout navItems={NAV_ITEMS} title="Home">
+      <div className="max-w-3xl">
+        <p className="text-sm text-gray-500 mb-5">Opportunities sorted by how well they match your profile.</p>
 
         {/* Filters */}
         <div className="flex flex-wrap gap-3 mb-6">
           <select
             value={areaFilter}
             onChange={(e) => setAreaFilter(e.target.value)}
-            className="border border-gray-300 rounded-lg p-2 text-sm"
+            className="border border-gray-300 rounded-lg p-2 text-sm bg-white"
           >
             <option value="">All areas</option>
             {AREAS_OPTIONS.map((a) => <option key={a} value={a}>{a}</option>)}
@@ -66,13 +55,13 @@ export default function VolunteerDashboard() {
             placeholder="Location"
             value={locationFilter}
             onChange={(e) => setLocationFilter(e.target.value)}
-            className="border border-gray-300 rounded-lg p-2 text-sm w-40"
+            className="border border-gray-300 rounded-lg p-2 text-sm w-40 bg-white"
           />
 
           <select
             value={experienceFilter}
             onChange={(e) => setExperienceFilter(e.target.value as "any" | "yes" | "no")}
-            className="border border-gray-300 rounded-lg p-2 text-sm"
+            className="border border-gray-300 rounded-lg p-2 text-sm bg-white"
           >
             <option value="any">Any experience</option>
             <option value="no">No experience needed</option>
@@ -89,7 +78,7 @@ export default function VolunteerDashboard() {
           {filtered.map((opp) => {
             const applied = myApplications.includes(opp.id);
             return (
-              <div key={opp.id} className="border border-gray-200 rounded-xl p-4">
+              <div key={opp.id} className="bg-white border border-gray-200 rounded-xl p-4">
                 <div className="flex justify-between items-start mb-1">
                   <div>
                     <p className="text-xs text-gray-500">{opp.orgName}</p>
@@ -132,6 +121,6 @@ export default function VolunteerDashboard() {
           })}
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

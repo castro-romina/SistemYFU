@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { getUser } from "../../lib/auth";
 import { getQuickProfile, saveQuickProfile, SKILLS_OPTIONS } from "../../lib/mockData";
 import ChipSelect from "../../components/common/ChipSelect";
+import DashboardLayout from "../../components/layout/DashboardLayout";
+import type { NavItem } from "../../components/layout/Sidebar";
+
+const NAV_ITEMS: NavItem[] = [
+  { label: "Home", to: "/InProgress", icon: "🏠" },
+];
 
 export default function Settings() {
-  const user = getUser();
   const [profile, setProfile] = useState(getQuickProfile());
   const [cvFileName, setCvFileName] = useState("");
   const [saved, setSaved] = useState(false);
@@ -22,28 +25,16 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <nav className="border-b border-gray-200 px-4 py-3 flex justify-between items-center">
-        <span className="font-display font-bold text-lg">
-          <span className="text-purple-600">Match</span><span className="text-pink-500">Vol</span>
-        </span>
-        <Link to="/InProgress" className="text-sm font-semibold text-purple-600 hover:underline">
-          Back to opportunities
-        </Link>
-      </nav>
-
-      <div className="max-w-lg mx-auto px-4 py-6">
-        <h1 className="font-bold text-xl mb-1">Settings</h1>
-        <p className="text-sm text-gray-500 mb-6">Hi, {user?.name}. Manage your profile here.</p>
-
-        <div className="border border-gray-200 rounded-xl p-4 mb-4">
+    <DashboardLayout navItems={NAV_ITEMS} title="Settings">
+      <div className="max-w-lg">
+        <div className="bg-white border border-gray-200 rounded-xl p-4 mb-4">
           <h2 className="font-semibold mb-3">Resume / CV</h2>
           <input type="file" accept=".pdf,.doc,.docx" onChange={handleCvUpload} className="text-sm" />
           {cvFileName && <p className="text-xs text-green-600 mt-2">✓ {cvFileName} selected</p>}
           <p className="text-xs text-gray-400 mt-2">Storage coming soon.</p>
         </div>
 
-        <div className="border border-gray-200 rounded-xl p-4 mb-4">
+        <div className="bg-white border border-gray-200 rounded-xl p-4 mb-4">
           <h2 className="font-semibold mb-3">Matching profile</h2>
           <div className="grid grid-cols-2 gap-3 mb-3">
             <div>
@@ -81,6 +72,6 @@ export default function Settings() {
           {saved ? "Saved ✓" : "Save changes"}
         </button>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }
