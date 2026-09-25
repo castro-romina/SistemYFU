@@ -39,28 +39,46 @@ export default function OnboardingStep4() {
   }, []);
 
   const handleFinish = async () => {
-    setIsLoading(true);
-    try {
-      console.log("userData:", userData);
-      const response = await completeOnboarding(userData);
-      console.log("Response:", response);
+  setIsLoading(true);
+  try {
+    // Traduce las claves en inglés del wizard a los nombres que espera el backend
+    const payload = {
+      fullName: userData.fullName,
+      fechaNacimiento: userData.birthDate,
+      pais: userData.country,
+      telefono: userData.phone,
+      ciudad: userData.city,
+      comoSeEntero: userData.howHeard,
+      fotoPerfil: userData.fotoPerfil,
+      acercaDe: userData.aboutYou,
+      carrera: userData.career,
+      genero: userData.gender,
+      linkedin: userData.linkedIn,
+      habilidades: userData.skills,
+      experiencia: userData.experience,
+      horasPorSemana: userData.hoursPerWeek,
+      disponibilidad: userData.availability,
+    };
 
-      // Actualizar el usuario guardado para que el flag quede en true
-      const currentUser = JSON.parse(localStorage.getItem("matchvol-user") || "{}");
-      localStorage.setItem("matchvol-user", JSON.stringify({ ...currentUser, onboardingCompleted: true }));
+    console.log("payload enviado:", payload);
+    const response = await completeOnboarding(payload);
+    console.log("Response:", response);
 
-      localStorage.removeItem("onboarding-step1");
-      localStorage.removeItem("onboarding-step2");
-      localStorage.removeItem("onboarding-step3");
-      clearPersistedKeys(ONBOARDING_FORM_KEYS);
+    const currentUser = JSON.parse(localStorage.getItem("matchvol-user") || "{}");
+    localStorage.setItem("matchvol-user", JSON.stringify({ ...currentUser, onboardingCompleted: true }));
 
-      navigate("/InProgress");
-    } catch (error) {
-      console.error("Catch error:", error);
-      alert("Error: " + (error instanceof Error ? error.message : "Unknown error"));
-      setIsLoading(false);
-    }
-  };
+    localStorage.removeItem("onboarding-step1");
+    localStorage.removeItem("onboarding-step2");
+    localStorage.removeItem("onboarding-step3");
+    clearPersistedKeys(ONBOARDING_FORM_KEYS);
+
+    navigate("/InProgress");
+  } catch (error) {
+    console.error("Catch error:", error);
+    alert("Error: " + (error instanceof Error ? error.message : "Unknown error"));
+    setIsLoading(false);
+  }
+};
 
   return (
     <div className="auth-shell">
