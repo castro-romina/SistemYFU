@@ -4,6 +4,7 @@ import Button from "../../components/common/Button";
 import TextField from "../../components/common/TextField";
 import ModalAviso from "../../components/common/ModalAviso";
 import { usePersistedState } from "../../hooks/usePersistedState";
+import { logout } from "../../lib/auth";
 
 interface Country {
   id: string;
@@ -192,11 +193,24 @@ export default function Onboarding() {
       )}
       <main className="auth-card">
         <header className="auth-heading flex flex-col items-center mb-6">
+
+          <button
+    type="button"
+    onClick={() => {
+      logout();
+      navigate("/login");
+    }}
+    className="text-xs text-gray-400 hover:text-gray-600 hover:underline self-end mb-2"
+  >
+    Sign out
+  </button>
           <img src="/logofinal.png" alt="MatchVol" width="48" height="48" className="rounded-lg mb-3" />
           <h1 className="font-display font-bold text-2xl tracking-tight text-center">
             We're happy you're joining <span className="text-purple-600">Match</span><span className="text-pink-500">Vol</span>
           </h1>
           <p className="text-sm text-[#4B4560] text-center font-medium mt-2">Complete the form and start connecting</p>
+
+
         </header>
 
         <form onSubmit={handleSubmit} className="auth-form">

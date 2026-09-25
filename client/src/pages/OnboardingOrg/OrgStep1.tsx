@@ -6,6 +6,7 @@ import StepDots from "../../components/common/StepDots";
 import LocationFields, { validatePhoneNumber, type LocationValue } from "../../components/common/LocationFields";
 import ModalAviso from "../../components/common/ModalAviso";
 import { usePersistedState } from "../../hooks/usePersistedState";
+import { logout } from "../../lib/auth";
 
 const KEY = "onboarding-org-step1";
 const ORG_TYPES = ["Foundation", "NGO", "Civil association", "Cooperative", "Other"];
@@ -62,6 +63,16 @@ export default function OrgStep1() {
       )}
       <main className="auth-card">
         <header className="auth-heading flex flex-col items-center mb-6">
+          <button
+    type="button"
+    onClick={() => {
+      logout();
+      navigate("/login");
+    }}
+    className="text-xs text-gray-400 hover:text-gray-600 hover:underline self-end mb-2"
+  >
+    Sign out
+  </button>
           <img src="/logofinal.png" alt="MatchVol" width="48" height="48" className="rounded-lg mb-3" />
           <StepDots current={1} />
           <h1 className="font-bold text-xl text-center">Tell us about your organization</h1>
