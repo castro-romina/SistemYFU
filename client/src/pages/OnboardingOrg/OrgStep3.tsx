@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Button from "../../components/common/Button";
 import TextField from "../../components/common/TextField";
 import StepDots from "../../components/common/StepDots";
+import { usePersistedState } from "../../hooks/usePersistedState";
 
 const KEY = "onboarding-org-step3";
 const TAX_ID_LABEL: Record<string, string> = { AR: "CUIT", CL: "RUT", CO: "NIT", MX: "RFC", PE: "RUC" };
@@ -19,14 +20,13 @@ const isValidCuit = (value: string): boolean => {
 
 export default function OrgStep3() {
   const navigate = useNavigate();
-  const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
   const country: string = JSON.parse(localStorage.getItem("onboarding-org-step1") || "{}").pais || "";
   const taxLabel = TAX_ID_LABEL[country] || "Tax ID";
 
-  const [sitioWeb, setSitioWeb] = useState<string>(saved.sitioWeb || "");
-  const [linkedin, setLinkedin] = useState<string>(saved.linkedin || "");
-  const [instagram, setInstagram] = useState<string>(saved.instagram || "");
-  const [cuit, setCuit] = useState<string>(saved.cuit || "");
+  const [sitioWeb, setSitioWeb] = usePersistedState("org-step3-sitioWeb", "");
+  const [linkedin, setLinkedin] = usePersistedState("org-step3-linkedin", "");
+  const [instagram, setInstagram] = usePersistedState("org-step3-instagram", "");
+  const [cuit, setCuit] = usePersistedState("org-step3-cuit", "");
   const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {

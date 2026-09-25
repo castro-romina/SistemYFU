@@ -1,22 +1,28 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Button from "../../components/common/Button";
 import TextField from "../../components/common/TextField";
 import StepDots from "../../components/common/StepDots";
 import LocationFields, { validatePhoneNumber, type LocationValue } from "../../components/common/LocationFields";
+import ModalAviso from "../../components/common/ModalAviso";
+import { usePersistedState } from "../../hooks/usePersistedState";
 
 const KEY = "onboarding-org-step1";
 const ORG_TYPES = ["Foundation", "NGO", "Civil association", "Cooperative", "Other"];
 
 export default function OrgStep1() {
   const navigate = useNavigate();
-  const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
-  const [nombre, setNombre] = useState<string>(saved.nombre || "");
-  const [tipo, setTipo] = useState<string>(saved.tipo || "");
-  const [location, setLocation] = useState<LocationValue>({
-    country: saved.pais || "",
-    phone: saved.telefono || "",
-    city: saved.ciudad || "",
+  const location = useLocation();
+  const [showOnboardingModal, setShowOnboardingModal] = useState(
+    Boolean((location.state as { onboardingRequired?: boolean } | null)?.onboardingRequired)
+  );
+
+  const [nombre, setNombre] = usePersistedState("org-step1-nombre", "");
+  const [tipo, setTipo] = usePersistedState("org-step1-tipo", "");
+  const [locationValue, setLocationValue] = usePersistedState<LocationValue>("org-step1-location", {
+    country: "",
+    phone: "",
+    city: "",
   });
   const [error, setError] = useState("");
 
@@ -26,20 +32,20 @@ export default function OrgStep1() {
 
     if (!nombre.trim()) return setError("Organization name is required");
     if (!tipo) return setError("Please select the type of organization");
-    if (!location.country) return setError("Country is required");
-    if (!location.phone.trim()) return setError("Phone number is required");
-    if (!validatePhoneNumber(location.phone, location.country))
+    if (!locationValue.country) return setError("Country is required");
+    if (!locationValue.phone.trim()) return setError("Phone number is required");
+    if (!validatePhoneNumber(locationValue.phone, locationValue.country))
       return setError("Invalid phone number format for the selected country");
-    if (!location.city) return setError("Please select your city from the list");
+    if (!locationValue.city) return setError("Please select your city from the list");
 
     localStorage.setItem(
       KEY,
       JSON.stringify({
         nombre: nombre.trim(),
         tipo,
-        pais: location.country,
-        ciudad: location.city,
-        telefono: location.phone,
+        pais: locationValue.country,
+        ciudad: locationValue.city,
+        telefono: locationValue.phone,
       })
     );
     navigate("/OnboardingOrg/step2");
@@ -47,6 +53,13 @@ export default function OrgStep1() {
 
   return (
     <div className="auth-shell">
+      {showOnboardingModal && (
+        <ModalAviso
+          title="Complete your organization's registration"
+          message="Before you can use your account, you need to finish completing this form."
+          onClose={() => setShowOnboardingModal(false)}
+        />
+      )}
       <main className="auth-card">
         <header className="auth-heading flex flex-col items-center mb-6">
           <img src="/logofinal.png" alt="MatchVol" width="48" height="48" className="rounded-lg mb-3" />
@@ -80,7 +93,7 @@ export default function OrgStep1() {
             ))}
           </select>
 
-          <LocationFields value={location} onChange={setLocation} />
+          <LocationFields value={locationValue} onChange={setLocationValue} />
 
           {error && <p className="text-red-500 text-sm font-semibold">{error}</p>}
 

@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/common/Button";
+import { usePersistedState } from "../../hooks/usePersistedState";
 
 export default function OnboardingStep3() {
   const navigate = useNavigate();
-  const [skills, setSkills] = useState<string[]>([]);
-  const [customSkill, setCustomSkill] = useState("");
-  const [experience, setExperience] = useState("");
-  const [hoursPerWeek, setHoursPerWeek] = useState("");
-  const [availability, setAvailability] = useState<string[]>([]);
+  const [skills, setSkills] = usePersistedState<string[]>("onboarding-step3-skills", []);
+  const [customSkill, setCustomSkill] = usePersistedState("onboarding-step3-customSkill", "");
+  const [experience, setExperience] = usePersistedState("onboarding-step3-experience", "");
+  const [hoursPerWeek, setHoursPerWeek] = usePersistedState("onboarding-step3-hoursPerWeek", "");
+  const [availability, setAvailability] = usePersistedState<string[]>("onboarding-step3-availability", []);
   const [isLoading, setIsLoading] = useState(false);
 
   const availableSkills = [

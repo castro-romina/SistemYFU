@@ -4,7 +4,7 @@ import RoleSelector from "../../components/auth/RoleSelector";
 import SocialAuth from "../../components/auth/SocialAuth";
 import Button from "../../components/common/Button"; 
 import TextField from "../../components/common/TextField";
-import { register as executeRegister, register, type AccountRole } from "../../lib/api"
+import { register, type AccountRole } from "../../lib/api"
 import "./Register.css";
 
 export default function Register() {
@@ -39,10 +39,10 @@ export default function Register() {
     localStorage.setItem("matchvol-user", JSON.stringify(user));
 
     if (user.role === "organization") {
-      navigate("/onboarding-organization");
-    } else {
-      navigate("/Onboarding");
-    }
+        navigate("/OnboardingOrg");
+      } else {
+        navigate("/Onboarding");
+      }
   } catch (err) {
     setError(err instanceof Error ? err.message : "Registration failed. Please try again.");
   } finally {
@@ -51,8 +51,6 @@ export default function Register() {
 }
 
  
-  
-
   return (
     <div className="auth-shell">
       <main className="auth-card auth-card--register" aria-labelledby="register-title">

@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Button from "../../components/common/Button";
 import TextField from "../../components/common/TextField";
+import ModalAviso from "../../components/common/ModalAviso";
+import { usePersistedState } from "../../hooks/usePersistedState";
 
 interface Country {
   id: string;
@@ -10,13 +12,18 @@ interface Country {
 
 export default function Onboarding() {
   const navigate = useNavigate();
-  const [fullName, setFullName] = useState("");
-  const [birthDate, setBirthDate] = useState("");
-  const [country, setCountry] = useState("");
-  const [phone, setPhone] = useState("");
-  const [city, setCity] = useState("");
-  const [cityQuery, setCityQuery] = useState("");
-  const [howHeard, setHowHeard] = useState("");
+  const location = useLocation();
+  const [showOnboardingModal, setShowOnboardingModal] = useState(
+    Boolean((location.state as { onboardingRequired?: boolean } | null)?.onboardingRequired)
+  );
+
+  const [fullName, setFullName] = usePersistedState("onboarding-fullName", "");
+  const [birthDate, setBirthDate] = usePersistedState("onboarding-birthDate", "");
+  const [country, setCountry] = usePersistedState("onboarding-country", "");
+  const [phone, setPhone] = usePersistedState("onboarding-phone", "");
+  const [city, setCity] = usePersistedState("onboarding-city", "");
+  const [cityQuery, setCityQuery] = usePersistedState("onboarding-cityQuery", "");
+  const [howHeard, setHowHeard] = usePersistedState("onboarding-howHeard", "");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [countries, setCountries] = useState<Country[]>([]);
@@ -104,7 +111,7 @@ export default function Onboarding() {
     const today = new Date();
     const age = today.getFullYear() - birth.getFullYear();
     const monthDiff = today.getMonth() - birth.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
       return age - 1 >= 18;
     }
@@ -115,7 +122,6 @@ export default function Onboarding() {
     e.preventDefault();
     setError("");
 
-    // Validate all fields
     if (!fullName.trim()) {
       setError("Full name is required");
       return;
@@ -153,7 +159,6 @@ export default function Onboarding() {
     setIsLoading(true);
 
     try {
-      // Save step 1 data
       localStorage.setItem("onboarding-step1", JSON.stringify({
         fullName, birthDate, country, phone, city, howHeard
       }));
@@ -178,6 +183,13 @@ export default function Onboarding() {
 
   return (
     <div className="auth-shell">
+      {showOnboardingModal && (
+        <ModalAviso
+         title="Complete your registration"
+    message="Before you can use your account, you need to finish completing this form."
+    onClose={() => setShowOnboardingModal(false)}
+    />
+      )}
       <main className="auth-card">
         <header className="auth-heading flex flex-col items-center mb-6">
           <img src="/logofinal.png" alt="MatchVol" width="48" height="48" className="rounded-lg mb-3" />
@@ -243,7 +255,7 @@ export default function Onboarding() {
               disabled={!country}
               required
             />
-            
+
             {showSuggestions && citySuggestions.length > 0 && (
               <div className="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded-lg mt-1 shadow-lg z-10">
                 {citySuggestions.map((suggestion) => (

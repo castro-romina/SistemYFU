@@ -2,6 +2,27 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/common/Button";
 import { completeOnboarding } from "../../lib/api";
+import { clearPersistedKeys } from "../../hooks/usePersistedState";
+
+const ONBOARDING_FORM_KEYS = [
+  "onboarding-fullName",
+  "onboarding-birthDate",
+  "onboarding-country",
+  "onboarding-phone",
+  "onboarding-city",
+  "onboarding-cityQuery",
+  "onboarding-howHeard",
+  "onboarding-step2-aboutYou",
+  "onboarding-step2-career",
+  "onboarding-step2-otherCareer",
+  "onboarding-step2-gender",
+  "onboarding-step2-linkedIn",
+  "onboarding-step3-skills",
+  "onboarding-step3-customSkill",
+  "onboarding-step3-experience",
+  "onboarding-step3-hoursPerWeek",
+  "onboarding-step3-availability",
+];
 
 export default function OnboardingStep4() {
   const navigate = useNavigate();
@@ -17,25 +38,25 @@ export default function OnboardingStep4() {
     setUserData({ ...user, ...step1, ...step2, ...step3 });
   }, []);
 
-
   const handleFinish = async () => {
-  setIsLoading(true);
-  try {
-    console.log("userData:", userData);
-    const response = await completeOnboarding(userData);
-    console.log("Response:", response);
-    
-    localStorage.removeItem("onboarding-step1");
-    localStorage.removeItem("onboarding-step2");
-    localStorage.removeItem("onboarding-step3");
+    setIsLoading(true);
+    try {
+      console.log("userData:", userData);
+      const response = await completeOnboarding(userData);
+      console.log("Response:", response);
 
-    navigate("/InProgress");
-  } catch (error) {
-    console.error("Catch error:", error);
-    alert("Error: " + (error instanceof Error ? error.message : "Unknown error"));
-    setIsLoading(false);
-  }
-};
+      localStorage.removeItem("onboarding-step1");
+      localStorage.removeItem("onboarding-step2");
+      localStorage.removeItem("onboarding-step3");
+      clearPersistedKeys(ONBOARDING_FORM_KEYS);
+
+      navigate("/InProgress");
+    } catch (error) {
+      console.error("Catch error:", error);
+      alert("Error: " + (error instanceof Error ? error.message : "Unknown error"));
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="auth-shell">

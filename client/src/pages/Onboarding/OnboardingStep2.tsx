@@ -1,16 +1,17 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/common/Button";
+import { usePersistedState } from "../../hooks/usePersistedState";
 
 export default function OnboardingStep2() {
   const navigate = useNavigate();
   const [profilePhoto, setProfilePhoto] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
-  const [aboutYou, setAboutYou] = useState("");
-  const [career, setCareer] = useState("");
-  const [otherCareer, setOtherCareer] = useState("");
-  const [gender, setGender] = useState("");
-  const [linkedIn, setLinkedIn] = useState("");
+  const [aboutYou, setAboutYou] = usePersistedState("onboarding-step2-aboutYou", "");
+  const [career, setCareer] = usePersistedState("onboarding-step2-career", "");
+  const [otherCareer, setOtherCareer] = usePersistedState("onboarding-step2-otherCareer", "");
+  const [gender, setGender] = usePersistedState("onboarding-step2-gender", "");
+  const [linkedIn, setLinkedIn] = usePersistedState("onboarding-step2-linkedIn", "");
   const [isLoading, setIsLoading] = useState(false);
   const [photoError, setPhotoError] = useState("");
   const fileInputRef = React.useRef<HTMLInputElement>(null);

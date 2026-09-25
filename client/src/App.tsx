@@ -18,6 +18,7 @@ import OrgStep1 from "./pages/OnboardingOrg/OrgStep1";
 import OrgStep2 from "./pages/OnboardingOrg/OrgStep2";
 import OrgStep3 from "./pages/OnboardingOrg/OrgStep3";
 import OrgStep4 from "./pages/OnboardingOrg/OrgStep4";
+import NotFound from "./pages/NotFound/NotFound";
 
 export default function App() {
   return (
@@ -37,7 +38,7 @@ export default function App() {
       </Route>
 
       {/* Solo voluntarios con sesión */}
-      <Route element={<ProtectedRoute role="volunteer" />}>
+      <Route element={<ProtectedRoute role="volunteer" requireOnboarding={false} />}>
         <Route path="/Onboarding" element={<Onboarding />} />
         <Route path="/Onboarding/step2" element={<OnboardingStep2 />} />
         <Route path="/Onboarding/step3" element={<OnboardingStep3 />} />
@@ -45,7 +46,7 @@ export default function App() {
       </Route>
 
       {/* Solo organizaciones con sesión */}
-      <Route element={<ProtectedRoute role="organization" />}>
+    <Route element={<ProtectedRoute role="organization" requireOnboarding={false} />}>
         <Route path="/OnboardingOrg" element={<OrgStep1 />} />
         <Route path="/OnboardingOrg/step2" element={<OrgStep2 />} />
         <Route path="/OnboardingOrg/step3" element={<OrgStep3 />} />
@@ -56,6 +57,10 @@ export default function App() {
       <Route element={<ProtectedRoute />}>
         <Route path="/InProgress" element={<InProcess />} />
       </Route>
+
+      <Route path="*" element={<NotFound />} />
     </Routes>
+
+   
   );
 }

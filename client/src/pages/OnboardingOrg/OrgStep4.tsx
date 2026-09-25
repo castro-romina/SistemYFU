@@ -3,8 +3,23 @@ import { useNavigate } from "react-router-dom";
 import Button from "../../components/common/Button";
 import StepDots from "../../components/common/StepDots";
 import { completeOrgOnboarding } from "../../lib/api";
+import { clearPersistedKeys } from "../../hooks/usePersistedState";
 
 const KEYS = ["onboarding-org-step1", "onboarding-org-step2", "onboarding-org-step3"];
+
+const ORG_FORM_KEYS = [
+  "org-step1-nombre",
+  "org-step1-tipo",
+  "org-step1-location",
+  "org-step2-logo",
+  "org-step2-descripcion",
+  "org-step2-mision",
+  "org-step2-areasTrabajo",
+  "org-step3-sitioWeb",
+  "org-step3-linkedin",
+  "org-step3-instagram",
+  "org-step3-cuit",
+];
 
 export default function OrgStep4() {
   const navigate = useNavigate();
@@ -22,12 +37,14 @@ export default function OrgStep4() {
     try {
       await completeOrgOnboarding(data);
       KEYS.forEach((k) => localStorage.removeItem(k));
+      clearPersistedKeys(ORG_FORM_KEYS);
       navigate("/InProgress");
     } catch (error) {
       alert("Error: " + (error instanceof Error ? error.message : "Unknown error"));
       setIsLoading(false);
     }
   };
+
 
   return (
     <div className="auth-shell">

@@ -26,6 +26,7 @@ model Fundacion {
   instagram     String?
   areasTrabajo  String[] @default([])
   cuit          String?
+  onboardingCompleted Boolean @default(false)
 }
 
 model Voluntario {
@@ -58,6 +59,7 @@ model Voluntario {
 
   createdAt       DateTime      @default(now())
   postulaciones   Postulacion[]
+  onboardingCompleted Boolean @default(false)
 }
 
 model Tarea {

@@ -7,8 +7,6 @@ import { signToken, type AuthRequest } from "../middleware/auth.js";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Los hashes de bcrypt empiezan con "$2". Las cuentas viejas (contraseña en texto plano)
-// se siguen aceptando una vez y se convierten a hash al iniciar sesión.
 const isHashed = (value: string) => value.startsWith("$2");
 const hashPassword = (plain: string) => bcrypt.hash(plain, 10);
 const passwordMatches = async (plain: string, stored: string) =>
@@ -27,16 +25,15 @@ export const register = async (req: Request, res: Response) => {
       if (existingNGO) return res.status(400).json({ message: "Email already registered as organization." });
 
       const newNGO = await prisma.fundacion.create({
-        data: { 
-          nombre: name, 
-          email, 
-          password: await hashPassword(password), 
+        data: {
+          nombre: name,
+          email,
+          password: await hashPassword(password),
           descripcion: "",
           areasTrabajo: []
         }
       });
 
-      // Send welcome email (no esperar: si falla, el registro igual se completa)
       resend.emails.send({
         from: "MatchVol <onboarding@resend.dev>",
         to: email,
@@ -48,6 +45,7 @@ export const register = async (req: Request, res: Response) => {
         name: newNGO.nombre,
         email: newNGO.email,
         role: "organization",
+        onboardingCompleted: newNGO.onboardingCompleted,
         token: signToken({ email: newNGO.email, role: "organization" })
       });
     } else {
@@ -58,7 +56,6 @@ export const register = async (req: Request, res: Response) => {
         data: { nombre: name, email, password: await hashPassword(password) }
       });
 
-      // Send welcome email (no esperar)
       resend.emails.send({
         from: "MatchVol <onboarding@resend.dev>",
         to: email,
@@ -70,6 +67,7 @@ export const register = async (req: Request, res: Response) => {
         name: newVolunteer.nombre,
         email: newVolunteer.email,
         role: "volunteer",
+        onboardingCompleted: newVolunteer.onboardingCompleted,
         token: signToken({ email: newVolunteer.email, role: "volunteer" })
       });
     }
@@ -99,6 +97,7 @@ export const login = async (req: Request, res: Response) => {
         name: ngo.nombre,
         email: ngo.email,
         role: "organization",
+        onboardingCompleted: ngo.onboardingCompleted,
         token: signToken({ email: ngo.email, role: "organization" })
       });
     } else {
@@ -113,6 +112,7 @@ export const login = async (req: Request, res: Response) => {
         name: volunteer.nombre,
         email: volunteer.email,
         role: "volunteer",
+        onboardingCompleted: volunteer.onboardingCompleted,
         token: signToken({ email: volunteer.email, role: "volunteer" })
       });
     }
@@ -203,14 +203,13 @@ export const resetPassword = async (req: Request, res: Response) => {
 };
 
 export const completeOnboarding = async (req: Request, res: Response) => {
-  // El email sale del token, no del cuerpo: nadie puede editar el perfil de otra persona
   const email = (req as AuthRequest).user!.email;
 
   const { fullName, fechaNacimiento, pais, telefono, ciudad, comoSeEntero, fotoPerfil, acercaDe, carrera, genero, linkedin, habilidades, experiencia, horasPorSemana, disponibilidad } = req.body;
 
   try {
-    const updateData: any = {};
-    
+    const updateData: any = { onboardingCompleted: true };
+
     if (fullName) updateData.nombre = fullName;
     if (fechaNacimiento) updateData.fechaNacimiento = new Date(fechaNacimiento);
     if (pais) updateData.pais = pais;
@@ -241,7 +240,6 @@ export const completeOnboarding = async (req: Request, res: Response) => {
 };
 
 export const completeOrgOnboarding = async (req: Request, res: Response) => {
-  // El email sale del token, no del cuerpo
   const email = (req as AuthRequest).user!.email;
 
   const {
@@ -281,10 +279,10 @@ export const completeOrgOnboarding = async (req: Request, res: Response) => {
         linkedin: linkedin.trim(),
         instagram: instagram?.trim() || null,
         cuit: cuit.trim(),
+        onboardingCompleted: true,
       },
     });
 
-    // No devolvemos la contraseña
     const { password, ...organization } = updated;
     return res.status(200).json({ message: "Organization onboarding completed successfully", organization });
   } catch (error) {

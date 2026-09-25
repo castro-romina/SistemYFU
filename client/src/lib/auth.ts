@@ -5,6 +5,7 @@ export interface StoredUser {
   email: string;
   role: AccountRole;
   token: string;
+  onboardingCompleted: boolean;
   [key: string]: unknown;
 }
 

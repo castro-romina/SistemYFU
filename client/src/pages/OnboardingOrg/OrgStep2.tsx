@@ -4,6 +4,7 @@ import Button from "../../components/common/Button";
 import StepDots from "../../components/common/StepDots";
 import PhotoPicker from "../../components/common/PhotoPicker";
 import ChipSelect from "../../components/common/ChipSelect";
+import { usePersistedState } from "../../hooks/usePersistedState";
 
 const KEY = "onboarding-org-step2";
 const AREAS = [
@@ -24,11 +25,10 @@ const AREAS = [
 
 export default function OrgStep2() {
   const navigate = useNavigate();
-  const saved = JSON.parse(localStorage.getItem(KEY) || "{}");
-  const [logo, setLogo] = useState<string>(saved.logo || "");
-  const [descripcion, setDescripcion] = useState<string>(saved.descripcion || "");
-  const [mision, setMision] = useState<string>(saved.mision || "");
-  const [areasTrabajo, setAreasTrabajo] = useState<string[]>(saved.areasTrabajo || []);
+  const [logo, setLogo] = usePersistedState("org-step2-logo", "");
+  const [descripcion, setDescripcion] = usePersistedState("org-step2-descripcion", "");
+  const [mision, setMision] = usePersistedState("org-step2-mision", "");
+  const [areasTrabajo, setAreasTrabajo] = usePersistedState<string[]>("org-step2-areasTrabajo", []);
   const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
