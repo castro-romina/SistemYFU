@@ -36,6 +36,11 @@ export default function OrgStep4() {
     setIsLoading(true);
     try {
       await completeOrgOnboarding(data);
+
+      // Actualizar el usuario guardado para que el flag quede en true
+      const currentUser = JSON.parse(localStorage.getItem("matchvol-user") || "{}");
+      localStorage.setItem("matchvol-user", JSON.stringify({ ...currentUser, onboardingCompleted: true }));
+
       KEYS.forEach((k) => localStorage.removeItem(k));
       clearPersistedKeys(ORG_FORM_KEYS);
       navigate("/InProgress");
@@ -44,7 +49,6 @@ export default function OrgStep4() {
       setIsLoading(false);
     }
   };
-
 
   return (
     <div className="auth-shell">

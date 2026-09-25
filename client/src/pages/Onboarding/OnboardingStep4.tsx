@@ -45,6 +45,10 @@ export default function OnboardingStep4() {
       const response = await completeOnboarding(userData);
       console.log("Response:", response);
 
+      // Actualizar el usuario guardado para que el flag quede en true
+      const currentUser = JSON.parse(localStorage.getItem("matchvol-user") || "{}");
+      localStorage.setItem("matchvol-user", JSON.stringify({ ...currentUser, onboardingCompleted: true }));
+
       localStorage.removeItem("onboarding-step1");
       localStorage.removeItem("onboarding-step2");
       localStorage.removeItem("onboarding-step3");
@@ -76,7 +80,7 @@ export default function OnboardingStep4() {
             !Todo listo, <span className="text-pink-500">{userData?.fullName}</span>!
           </h1>
           <p className="text-gray-600 mb-6">Tu cuenta fue creada con éxito.</p>
-          
+
           <div className="bg-purple-100 rounded-lg p-4 mb-6">
             <p className="text-sm text-gray-700 mb-2">Te enviamos un correo de bienvenida a</p>
             <p className="font-semibold text-purple-600">{userData?.email}</p>
@@ -84,7 +88,7 @@ export default function OnboardingStep4() {
 
           <div className="bg-gray-50 rounded-lg p-6 mb-6">
             <h2 className="font-bold text-lg mb-4">Resumen de tu perfil</h2>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center">
                 <div className="w-16 h-16 rounded-full bg-purple-200 flex items-center justify-center mx-auto mb-2">
