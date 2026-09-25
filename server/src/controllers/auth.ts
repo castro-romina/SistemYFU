@@ -290,3 +290,29 @@ export const completeOrgOnboarding = async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 };
+
+export const getMe = async (req: Request, res: Response) => {
+  const { email, role } = (req as AuthRequest).user!;
+
+  try {
+    if (role === "organization") {
+      const org = await prisma.fundacion.findUnique({ where: { email } });
+      if (!org) return res.status(404).json({ message: "Not found." });
+      const { password, ...data } = org;
+      return res.status(200).json({ ...data, role });
+    } else {
+      const volunteer = await prisma.voluntario.findUnique({ where: { email } });
+      if (!volunteer) return res.status(404).json({ message: "Not found." });
+      const { password, ...data } = volunteer;
+      return res.status(200).json({
+        ...data,
+        role,
+        habilidades: data.habilidades ? JSON.parse(data.habilidades as string) : [],
+        disponibilidad: data.disponibilidad ? JSON.parse(data.disponibilidad as string) : [],
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};

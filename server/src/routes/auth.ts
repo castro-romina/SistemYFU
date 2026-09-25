@@ -4,16 +4,16 @@ import { register, login, forgotPassword, resetPassword, completeOnboarding, com
 import { requireAuth, requireRole } from "../middleware/auth.js";
 
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 5, // máximo 5 intentos
+  windowMs: 15 * 60 * 1000,
+  max: process.env.NODE_ENV === "production" ? 5 : 100,
   message: "Too many login attempts. Please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
 });
 
 const registerLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hora
-  max: 3, // máximo 3 registros por IP
+  windowMs: 60 * 60 * 1000,
+  max: process.env.NODE_ENV === "production" ? 3 : 100,
   message: "Too many registrations. Please try again later.",
 });
 

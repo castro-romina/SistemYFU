@@ -26,10 +26,10 @@ export default function ConfirmationModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-      <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 animate-in fade-in zoom-in-95 duration-200" role="dialog" aria-modal="true">
+      <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6" role="dialog" aria-modal="true">
         <h2 className="text-xl font-bold text-gray-900 mb-2">{title}</h2>
         <p className="text-gray-600 mb-6 text-sm leading-relaxed">{message}</p>
-        
+
         <div className="flex gap-3 justify-end">
           <Button variant="secondary" onClick={onCancel} className="w-auto px-4 py-2 text-sm">
             {cancelLabel}

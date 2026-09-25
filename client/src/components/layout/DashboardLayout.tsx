@@ -1,15 +1,41 @@
-import { useState, type ReactNode } from "react";
+import { type ReactNode } from "react";
+import {
+  LayoutGrid,
+  Search,
+  ClipboardCheck,
+  MessageSquare,
+  User,
+  PlusCircle,
+  Users,
+  Building2,
+} from "lucide-react";
 import Sidebar, { type NavItem } from "./Sidebar";
 import { getUser } from "../../lib/auth";
 
+const volunteerNavItems: NavItem[] = [
+  { label: "Home", to: "/dashboard", icon: LayoutGrid },
+  { label: "Find opportunities", to: "/opportunities", icon: Search },
+  { label: "My applications", to: "/applications", icon: ClipboardCheck },
+  { label: "Messages", to: "/messages", icon: MessageSquare },
+  { label: "My profile", to: "/profile", icon: User },
+];
+
+const organizationNavItems: NavItem[] = [
+  { label: "Home", to: "/dashboard", icon: LayoutGrid },
+  { label: "Post opportunity", to: "/tasks/new", icon: PlusCircle },
+  { label: "Applicants", to: "/applicants", icon: Users },
+  { label: "Messages", to: "/messages", icon: MessageSquare },
+  { label: "Organization profile", to: "/profile", icon: Building2 },
+];
+
 interface DashboardLayoutProps {
-  navItems: NavItem[];
   title: string;
   children: ReactNode;
 }
 
-export default function DashboardLayout({ navItems, title, children }: DashboardLayoutProps) {
+export default function DashboardLayout({ title, children }: DashboardLayoutProps) {
   const user = getUser();
+  const navItems = user?.role === "organization" ? organizationNavItems : volunteerNavItems;
   const today = new Date().toLocaleDateString(undefined, {
     weekday: "long", year: "numeric", month: "long", day: "numeric",
   });

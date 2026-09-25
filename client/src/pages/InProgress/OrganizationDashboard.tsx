@@ -8,10 +8,6 @@ import ChipSelect from "../../components/common/ChipSelect";
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import type { NavItem } from "../../components/layout/Sidebar";
 
-const NAV_ITEMS: NavItem[] = [
-  { label: "Home", to: "/InProgress", icon: "🏠" },
-];
-
 const emptyForm = {
   title: "", description: "", location: "", areaTrabajo: "",
   ageMin: 18, ageMax: 99, experienceRequired: false, skillsRequired: [] as string[],
@@ -53,7 +49,7 @@ export default function OrganizationDashboard() {
   };
 
   return (
-    <DashboardLayout navItems={NAV_ITEMS} title="Home">
+    <DashboardLayout title="Home">
       <div className="max-w-4xl">
         <div className="flex justify-between items-center mb-6">
           <p className="text-sm text-gray-500">Manage your open opportunities and applicants.</p>

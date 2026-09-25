@@ -112,3 +112,12 @@ export async function completeOrgOnboarding(data: any): Promise<any> {
   }
   return response.json();
 }
+
+export async function getMyProfile(): Promise<any> {
+  const response = await authFetch("/api/auth/me");
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || "Failed to load profile.");
+  }
+  return response.json();
+}

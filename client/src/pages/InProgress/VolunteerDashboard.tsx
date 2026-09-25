@@ -6,9 +6,6 @@ import {
 import DashboardLayout from "../../components/layout/DashboardLayout";
 import type { NavItem } from "../../components/layout/Sidebar";
 
-const NAV_ITEMS: NavItem[] = [
-  { label: "Home", to: "/InProgress", icon: "🏠" },
-];
 
 export default function VolunteerDashboard() {
   const profile = getQuickProfile();
@@ -35,7 +32,7 @@ export default function VolunteerDashboard() {
     .sort((a, b) => b.match - a.match);
 
   return (
-    <DashboardLayout navItems={NAV_ITEMS} title="Home">
+    <DashboardLayout title="Home">
       <div className="max-w-3xl">
         <p className="text-sm text-gray-500 mb-5">Opportunities sorted by how well they match your profile.</p>
 
