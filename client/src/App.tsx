@@ -19,6 +19,7 @@ import OrgStep2 from "./pages/OnboardingOrg/OrgStep2";
 import OrgStep3 from "./pages/OnboardingOrg/OrgStep3";
 import OrgStep4 from "./pages/OnboardingOrg/OrgStep4";
 import NotFound from "./pages/NotFound/NotFound";
+import Settings from "./pages/Settings/Settings";
 
 export default function App() {
   return (
@@ -29,6 +30,11 @@ export default function App() {
       <Route path="/terms" element={<Terms />} />
       <Route path="/privacy" element={<Privacy />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+
+      <Route element={<ProtectedRoute />}>
+  <Route path="/InProgress" element={<InProcess />} />
+  <Route path="/settings" element={<Settings />} />
+</Route>
 
       {/* Solo sin sesión: con sesión iniciada no se puede volver acá */}
       <Route element={<GuestRoute />}>
