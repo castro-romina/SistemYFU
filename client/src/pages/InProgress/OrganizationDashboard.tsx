@@ -9,6 +9,7 @@ import ChipSelect from "../../components/common/ChipSelect";
 const emptyForm = {
   title: "", description: "", location: "", areaTrabajo: "",
   ageMin: 18, ageMax: 99, experienceRequired: false, skillsRequired: [] as string[],
+  commitment: "Flexible" as "Part-time" | "Full-time" | "Flexible",
 };
 
 export default function OrganizationDashboard() {
@@ -33,6 +34,7 @@ export default function OrganizationDashboard() {
       ageMax: form.ageMax,
       experienceRequired: form.experienceRequired,
       skillsRequired: form.skillsRequired,
+      commitment: form.commitment,
       date: new Date().toISOString().slice(0, 10),
     };
 
@@ -78,6 +80,7 @@ export default function OrganizationDashboard() {
                 <span className="bg-gray-100 px-2 py-1 rounded-full">📍 {opp.location}</span>
                 <span className="bg-gray-100 px-2 py-1 rounded-full">🎂 {opp.ageMin}-{opp.ageMax}</span>
                 <span className="bg-gray-100 px-2 py-1 rounded-full">{opp.areaTrabajo}</span>
+                <span className="bg-gray-100 px-2 py-1 rounded-full">⏱ {opp.commitment}</span>
               </div>
               <button
                 onClick={() => setViewingApplicants(opp)}
@@ -138,6 +141,18 @@ export default function OrganizationDashboard() {
                     className="border border-gray-300 rounded-lg p-2 w-full text-sm"
                   />
                 </div>
+              </div>
+              <div>
+                <label className="text-xs font-medium block mb-1">Commitment</label>
+                <select
+                  value={form.commitment}
+                  onChange={(e) => setForm({ ...form, commitment: e.target.value as "Part-time" | "Full-time" | "Flexible" })}
+                  className="border border-gray-300 rounded-lg p-2 w-full text-sm"
+                >
+                  <option value="Flexible">Flexible</option>
+                  <option value="Part-time">Part-time</option>
+                  <option value="Full-time">Full-time</option>
+                </select>
               </div>
               <label className="flex items-center gap-2 text-sm">
                 <input
