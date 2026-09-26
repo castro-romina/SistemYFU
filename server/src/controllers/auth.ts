@@ -316,3 +316,108 @@ export const getMe = async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Internal server error." });
   }
 };
+
+export const changePassword = async (req: Request, res: Response) => {
+  const email = (req as AuthRequest).user!.email;
+  const { currentPassword, newPassword } = req.body;
+
+  try {
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: "Current and new password are required." });
+    }
+    if (newPassword.length < 8) {
+      return res.status(400).json({ message: "New password must be at least 8 characters." });
+    }
+
+    const volunteer = await prisma.voluntario.findUnique({ where: { email } });
+    if (!volunteer || !(await passwordMatches(currentPassword, volunteer.password))) {
+      return res.status(403).json({ message: "Current password is incorrect." });
+    }
+
+    await prisma.voluntario.update({
+      where: { email },
+      data: { password: await hashPassword(newPassword) },
+    });
+
+    return res.status(200).json({ message: "Password updated successfully." });
+  } catch (error) {
+    console.error("Error changing password:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+export const changeEmail = async (req: Request, res: Response) => {
+  const currentEmail = (req as AuthRequest).user!.email;
+  const { newEmail, password } = req.body;
+
+  try {
+    if (!newEmail || !password) {
+      return res.status(400).json({ message: "New email and password are required." });
+    }
+
+    const volunteer = await prisma.voluntario.findUnique({ where: { email: currentEmail } });
+    if (!volunteer || !(await passwordMatches(password, volunteer.password))) {
+      return res.status(403).json({ message: "Password is incorrect." });
+    }
+
+    const existing = await prisma.voluntario.findUnique({ where: { email: newEmail } });
+    if (existing) {
+      return res.status(400).json({ message: "That email is already in use." });
+    }
+
+    await prisma.voluntario.update({
+      where: { email: currentEmail },
+      data: { email: newEmail },
+    });
+
+    // El token viejo queda firmado con el email anterior — el frontend necesita
+    // volver a loguearse o pedir un token nuevo acá si tenés esa lógica.
+    return res.status(200).json({ message: "Email updated successfully.", email: newEmail });
+  } catch (error) {
+    console.error("Error changing email:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+export const updateNotifications = async (req: Request, res: Response) => {
+  const email = (req as AuthRequest).user!.email;
+  const { notifEmail, notifPush } = req.body;
+
+  try {
+    const updated = await prisma.voluntario.update({
+      where: { email },
+      data: {
+        ...(typeof notifEmail === "boolean" ? { notifEmail } : {}),
+        ...(typeof notifPush === "boolean" ? { notifPush } : {}),
+      },
+    });
+    return res.status(200).json({ notifEmail: updated.notifEmail, notifPush: updated.notifPush });
+  } catch (error) {
+    console.error("Error updating notifications:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};
+
+export const deleteAccount = async (req: Request, res: Response) => {
+  const email = (req as AuthRequest).user!.email;
+  const { password } = req.body;
+
+  try {
+    if (!password) {
+      return res.status(400).json({ message: "Password is required to delete your account." });
+    }
+
+    const volunteer = await prisma.voluntario.findUnique({ where: { email } });
+    if (!volunteer || !(await passwordMatches(password, volunteer.password))) {
+      return res.status(403).json({ message: "Password is incorrect." });
+    }
+
+    await prisma.postulacion.deleteMany({ where: { voluntarioId: volunteer.id } });
+    await prisma.voluntario.delete({ where: { email } });
+
+    return res.status(200).json({ message: "Account deleted successfully." });
+  } catch (error) {
+    console.error("Error deleting account:", error);
+    return res.status(500).json({ message: "Internal server error." });
+  }
+};

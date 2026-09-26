@@ -121,3 +121,51 @@ export async function getMyProfile(): Promise<any> {
   }
   return response.json();
 }
+
+export async function changePassword(data: { currentPassword: string; newPassword: string }): Promise<{ message: string }> {
+  const response = await authFetch("/api/auth/change-password", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || "Failed to change password.");
+  }
+  return response.json();
+}
+
+export async function changeEmail(data: { newEmail: string; password: string }): Promise<{ message: string; email: string }> {
+  const response = await authFetch("/api/auth/change-email", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || "Failed to change email.");
+  }
+  return response.json();
+}
+
+export async function updateNotifications(data: { notifEmail?: boolean; notifPush?: boolean }): Promise<{ notifEmail: boolean; notifPush: boolean }> {
+  const response = await authFetch("/api/auth/notifications", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || "Failed to update notifications.");
+  }
+  return response.json();
+}
+
+export async function deleteAccount(password: string): Promise<{ message: string }> {
+  const response = await authFetch("/api/auth/account", {
+    method: "DELETE",
+    body: JSON.stringify({ password }),
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || "Failed to delete account.");
+  }
+  return response.json();
+}

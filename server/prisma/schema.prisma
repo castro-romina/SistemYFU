@@ -60,6 +60,9 @@ model Voluntario {
   createdAt       DateTime      @default(now())
   postulaciones   Postulacion[]
   onboardingCompleted Boolean @default(false)
+
+  notifEmail Boolean @default(true)
+  notifPush  Boolean @default(true)
 }
 
 model Tarea {
