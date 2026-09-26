@@ -20,6 +20,7 @@ import OrgStep3 from "./pages/OnboardingOrg/OrgStep3";
 import OrgStep4 from "./pages/OnboardingOrg/OrgStep4";
 import NotFound from "./pages/NotFound/NotFound";
 import Settings from "./pages/Settings/Settings";
+import MyProfile from "./pages/MyProfile/MyProfile";
 import ComingSoon from "./pages/ComingSoon/ComingSoon";
 
 export default function App() {
@@ -50,7 +51,7 @@ export default function App() {
         <Route path="/opportunities" element={<ComingSoon title="Find opportunities" />} />
         <Route path="/applications" element={<ComingSoon title="My applications" />} />
         <Route path="/messages" element={<ComingSoon title="Messages" />} />
-        <Route path="/profile" element={<ComingSoon title="My profile" />} />
+        <Route path="/profile" element={<MyProfile />} />
         <Route path="/tasks/new" element={<ComingSoon title="Post opportunity" />} />
         <Route path="/applicants" element={<ComingSoon title="Applicants" />} />
       </Route>
